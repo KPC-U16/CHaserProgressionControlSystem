@@ -39,7 +39,7 @@ model Match {
 
 	agent1 Participant @relation("Agent1Matches", fields: [agent1Id], references: [id])
 	agent2 Participant @relation("Agent2Matches", fields: [agent2Id], references: [id])
-	winner Participant @relation("Agent2Matches", fields: [winnerId], references: [id])
+	winner Participant?@relation("WinnerMatches", fields: [winnerId], references: [id])
 
 	scores Score[]
 
