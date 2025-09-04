@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      context: .
+      context: ./webapp
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
