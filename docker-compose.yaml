@@ -9,6 +9,16 @@ services:
       #NOTE: 本番環境の時は、以下の変数を変えること。
       - NODE_ENV=development
 
+  app-websock:
+    build:
+      context: ./webapp-websock
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      #NOTE: 本番環境の時は、以下の変数を変えること。
+      - NODE_ENV=development
+
   db:
     image: postgres:latest
     environment:
