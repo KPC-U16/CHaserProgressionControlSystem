@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
 const Prisma = new PrismaClient();
@@ -12,12 +12,10 @@ type Params = {
 /**
  * PATCH /api/users/[userId]
  */
-
 export async function PATCH(request: Request, { params }: Params) {
   try {
     const { userId } = params;
-    const { name } = await request.json();
-
+    const name = await request.json();
     if (!name || typeof name !== "string") {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
