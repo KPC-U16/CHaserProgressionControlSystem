@@ -3,16 +3,14 @@ import { PrismaClient } from "@prisma/client";
 
 const Prisma = new PrismaClient();
 
-type Params = {
-  params: {
-    userId: string;
-  };
-};
-
 /**
  * PATCH /api/users/[userId]
  */
-export async function PATCH(request: Request, { params }: Params) {
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { userId: string } },
+) {
   try {
     const { userId } = params;
     const name = await request.json();
