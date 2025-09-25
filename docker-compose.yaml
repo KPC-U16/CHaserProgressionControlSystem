@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      context: ./webapp
+      context: ./chros
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
@@ -11,7 +11,7 @@ services:
 
   app-websock:
     build:
-      context: ./webapp-websock
+      context: ./chros-websock
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
