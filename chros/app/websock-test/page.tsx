@@ -1,5 +1,5 @@
 "use client";
-const WEBSOCK_API_URL = process.env.WEBSOCK_SERVER;
+const WEBSOCK_API_URL = process.env.NEXT_PUBLIC_WEBSOCK_SERVER;
 
 export default function WebsockTestPage() {
   const callChangeScreen = async (name: string) => {
