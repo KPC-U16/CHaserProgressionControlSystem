@@ -1,10 +1,20 @@
 services:
   app:
     build:
-      context: ./webapp
+      context: ./chros
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    environment:
+      #NOTE: 本番環境の時は、以下の変数を変えること。
+      - NODE_ENV=development
+
+  app-websock:
+    build:
+      context: ./chros-websock
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
     environment:
       #NOTE: 本番環境の時は、以下の変数を変えること。
       - NODE_ENV=development
