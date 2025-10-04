@@ -8,6 +8,7 @@ services:
     environment:
       #NOTE: 本番環境の時は、以下の変数を変えること。
       - NODE_ENV=development
+      - DATABASE_URL=postgresql://user:password@db:5432/database
 
   app-websock:
     build:
