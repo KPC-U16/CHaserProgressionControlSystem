@@ -27,3 +27,13 @@ services:
       - POSTGRES_DB=database
     ports:
       - "5432:5432"
+
+  score:
+    build:
+      context: ./chros-score
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+
