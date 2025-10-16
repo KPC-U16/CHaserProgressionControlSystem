@@ -34,6 +34,3 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3002:3002"
-    environment:
-      - NODE_ENV=development
-
