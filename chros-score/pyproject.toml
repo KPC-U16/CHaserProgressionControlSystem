@@ -1,0 +1,18 @@
+[project]
+name = "chros-score"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "polyacetal",email = "yotyan988@gmail.com"}
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi (>=0.118.2,<0.119.0)",
+    "uvicorn[standard] (>=0.37.0,<0.38.0)",
+    "lupa (>=2.5,<3.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
