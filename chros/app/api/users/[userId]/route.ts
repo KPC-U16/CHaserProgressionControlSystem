@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
-const Prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 /**
  * PATCH /api/users/[userId]
@@ -18,7 +18,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
 
-    const updatedUser = await Prisma.user.update({
+    const updatedUser = await prisma.participant.update({
       where: {
         id: Number(userId),
       },
