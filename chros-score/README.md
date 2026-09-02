@@ -143,9 +143,7 @@ poetry run uvicorn src.score_api.main:app --reload --port 3002
 
 ### テスト
 
-pytest と httpx はランタイム依存に含めていないため、個別に入れる。
 
 ```bash
-pip install pytest httpx
-pytest
+poetry run pytest
 ```
