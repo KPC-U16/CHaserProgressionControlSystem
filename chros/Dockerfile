@@ -15,7 +15,6 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm --filter chros exec prisma generate
 RUN pnpm --filter chros build
 
 EXPOSE 3000
