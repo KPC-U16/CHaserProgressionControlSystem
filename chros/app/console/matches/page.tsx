@@ -1,7 +1,2 @@
-export default function MatchesPage() {
-  return (
-    <div>
-      <p className="text-xl font-semibold text-gray-900">ようこそ！ここはマッチ管理ページです。</p>
-    </div>
-  );
-}
+import ConsoleApp from '@/components/ConsoleApp';
+export default function Page() { return <ConsoleApp initialTab="matches" />; }
