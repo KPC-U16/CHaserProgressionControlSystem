@@ -9,9 +9,13 @@
     "dev": "pnpm --filter chros dev",
     "build": "pnpm --filter chros build",
     "start": "pnpm --filter chros start",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test",
+    "typecheck": "tsc --noEmit -p packages/shared && tsc --noEmit -p packages/scoring && tsc --noEmit -p chros",
+    "format": "prettier --write \"chros/{app,components,lib}/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.ts\" \"scripts/**/*.mjs\"",
+    "format:check": "prettier --check \"chros/{app,components,lib}/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.ts\" \"scripts/**/*.mjs\""
   },
   "devDependencies": {
+    "prettier": "3.9.8",
     "typescript": "^5.6.0"
   }
 }

@@ -12,48 +12,585 @@ export function Players({ state, send }: { state: ControlState; send: Send }) {
   const confirm = useConfirmation();
   const fresh = (): Player => ({ id: clientId(), name: '', affiliation: '', group: 'A' });
   const [draft, setDraft] = useState<Player>(fresh);
-  const editing = state.players.some(p => p.id === draft.id);
-  return <div className="management-grid"><section className="panel"><div className="panel-heading"><div><span className="eyebrow">PARTICIPANTS</span><h2>挑戦者たち <span className="count-pill">{state.players.length}</span></h2></div><span className="muted">{groupNames(state).length} グループ</span></div>
-    {state.players.length ? <div className="table-scroll"><table className="data-table"><thead><tr><th>参加者</th><th>所属</th><th>組</th><th /></tr></thead><tbody>{state.players.map(p => <tr key={p.id}><td><strong>{p.name}</strong></td><td>{p.affiliation || '–'}</td><td><span className="group-badge">{p.group}</span></td><td><button className="text-button" type="button" onClick={() => setDraft(p)}>編集</button>{!state.matches.length && <button className="text-button danger-text" type="button" onClick={async () => { if (await confirm(`${p.name}を参加者から削除しますか？`)) void send({ type: 'remove-player', playerId: p.id }); }}>削除</button>}</td></tr>)}</tbody></table></div> : <div className="empty-state">まず参加者を登録しましょう。<small>グループをすべて「A」にすると、全員で総当たりになります。</small></div>}
-    <div className="panel-footer"><p>{state.matches.length ? '組み合わせ作成済み · 表示名と所属は編集できます。' : '各グループの全員が1回ずつ対戦します。1試合は先攻・後攻を入れ替える2戦です。'}</p><button className="button primary" disabled={!!state.matches.length || state.players.length < 2} type="button" onClick={async () => { if (await confirm('現在の参加者とグループで予選を作成します。以降、参加者の追加・削除とグループ変更はできません。作成しますか？')) void send({ type: 'generate-qualifying' }); }}>予選の組み合わせを作成 →</button></div>
-  </section><section className="panel"><div className="panel-heading"><div><span className="eyebrow">ENTRY</span><h2>{editing ? '参加者を編集' : '参加者を追加'}</h2></div></div><form className="stack-form" onSubmit={async event => { event.preventDefault(); if (await send({ type: 'save-player', player: draft })) setDraft(fresh()); }}><label>表示名<input required maxLength={60} value={draft.name} placeholder="例：釧路 はる" onChange={e => setDraft({ ...draft, name: e.target.value })} /></label><label>所属<input maxLength={60} value={draft.affiliation} placeholder="学校名・チーム名など" onChange={e => setDraft({ ...draft, affiliation: e.target.value })} /></label><label>予選グループ<input required maxLength={12} disabled={!!state.matches.length} value={draft.group} onChange={e => setDraft({ ...draft, group: e.target.value })} /></label><div className="form-bottom">{editing && <button className="text-button" type="button" onClick={() => setDraft(fresh())}>新規登録に戻る</button>}<button className="button primary" disabled={!editing && !!state.matches.length} type="submit">{editing ? '変更を保存' : '参加者を追加'} ＋</button></div></form></section></div>;
+  const editing = state.players.some((p) => p.id === draft.id);
+  return (
+    <div className="management-grid">
+      <section className="panel">
+        <div className="panel-heading">
+          <div>
+            <span className="eyebrow">PARTICIPANTS</span>
+            <h2>
+              挑戦者たち <span className="count-pill">{state.players.length}</span>
+            </h2>
+          </div>
+          <span className="muted">{groupNames(state).length} グループ</span>
+        </div>
+        {state.players.length ? (
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>参加者</th>
+                  <th>所属</th>
+                  <th>組</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {state.players.map((p) => (
+                  <tr key={p.id}>
+                    <td>
+                      <strong>{p.name}</strong>
+                    </td>
+                    <td>{p.affiliation || '–'}</td>
+                    <td>
+                      <span className="group-badge">{p.group}</span>
+                    </td>
+                    <td>
+                      <button className="text-button" type="button" onClick={() => setDraft(p)}>
+                        編集
+                      </button>
+                      {!state.matches.length && (
+                        <button
+                          className="text-button danger-text"
+                          type="button"
+                          onClick={async () => {
+                            if (await confirm(`${p.name}を参加者から削除しますか？`))
+                              void send({ type: 'remove-player', playerId: p.id });
+                          }}
+                        >
+                          削除
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="empty-state">
+            まず参加者を登録しましょう。
+            <small>グループをすべて「A」にすると、全員で総当たりになります。</small>
+          </div>
+        )}
+        <div className="panel-footer">
+          <p>
+            {state.matches.length
+              ? '組み合わせ作成済み · 表示名と所属は編集できます。'
+              : '各グループの全員が1回ずつ対戦します。1試合は先攻・後攻を入れ替える2戦です。'}
+          </p>
+          <button
+            className="button primary"
+            disabled={!!state.matches.length || state.players.length < 2}
+            type="button"
+            onClick={async () => {
+              if (
+                await confirm(
+                  '現在の参加者とグループで予選を作成します。以降、参加者の追加・削除とグループ変更はできません。作成しますか？',
+                )
+              )
+                void send({ type: 'generate-qualifying' });
+            }}
+          >
+            予選の組み合わせを作成 →
+          </button>
+        </div>
+      </section>
+      <section className="panel">
+        <div className="panel-heading">
+          <div>
+            <span className="eyebrow">ENTRY</span>
+            <h2>{editing ? '参加者を編集' : '参加者を追加'}</h2>
+          </div>
+        </div>
+        <form
+          className="stack-form"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            if (await send({ type: 'save-player', player: draft })) setDraft(fresh());
+          }}
+        >
+          <label>
+            表示名
+            <input
+              required
+              maxLength={60}
+              value={draft.name}
+              placeholder="例：釧路 はる"
+              onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+            />
+          </label>
+          <label>
+            所属
+            <input
+              maxLength={60}
+              value={draft.affiliation}
+              placeholder="学校名・チーム名など"
+              onChange={(e) => setDraft({ ...draft, affiliation: e.target.value })}
+            />
+          </label>
+          <label>
+            予選グループ
+            <input
+              required
+              maxLength={12}
+              disabled={!!state.matches.length}
+              value={draft.group}
+              onChange={(e) => setDraft({ ...draft, group: e.target.value })}
+            />
+          </label>
+          <div className="form-bottom">
+            {editing && (
+              <button className="text-button" type="button" onClick={() => setDraft(fresh())}>
+                新規登録に戻る
+              </button>
+            )}
+            <button
+              className="button primary"
+              disabled={!editing && !!state.matches.length}
+              type="submit"
+            >
+              {editing ? '変更を保存' : '参加者を追加'} ＋
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  );
 }
 
 function FinalsSetup({ state, send }: { state: ControlState; send: Send }) {
   const confirm = useConfirmation();
   const [selected, setSelected] = useState(suggestedQualifiers(state));
   const [justification, setJustification] = useState('');
-  const ready = state.matches.filter(m => m.stage === 'qualifying').length > 0 && state.matches.filter(m => m.stage === 'qualifying').every(m => evaluateMatch(m, state.profile).winnerId);
-  const ties = groupNames(state).some(group => standings(state, group).some(r => r.tied && r.rank <= state.advancePerGroup));
-  return <div className="panel"><div className="panel-heading"><div><span className="eyebrow">NEXT STAGE</span><h2>本戦へ進む</h2></div><span className="status status-pending">各組 上位{state.advancePerGroup}名</span></div>{!ready ? <p className="panel-help padded">すべての予選試合が確定すると、進出者を確認して本戦を作成できます。</p> : <form className="stack-form" onSubmit={async e => { e.preventDefault(); if (await confirm('この進出者とシード順で本戦を作成します。確定後は予選結果を変更できません。作成しますか？')) await send({ type: 'generate-finals', qualifiers: selected, justification }); }}><p className="muted">予選順位から進出者を選びました。上からシード順です。同順位の裁定と入れ替えは、理由を記録します。</p>{selected.map((id, index) => <label key={index}>第{index + 1}シード<select value={id} onChange={e => setSelected(current => current.map((v, i) => i === index ? e.target.value : v))}>{state.players.map(p => <option value={p.id} key={p.id}>{p.group}組 · {p.name}</option>)}</select></label>)}<label>同順位の裁定・シード順の理由{ties && <span className="required">必須</span>}<input required={ties} maxLength={300} value={justification} onChange={e => setJustification(e.target.value)} placeholder="例：同順位の2名が抽選し、進出者を決定" /></label><button className="button primary" type="submit">進出者を確定して本戦を作成 →</button></form>}</div>;
+  const ready =
+    state.matches.filter((m) => m.stage === 'qualifying').length > 0 &&
+    state.matches
+      .filter((m) => m.stage === 'qualifying')
+      .every((m) => evaluateMatch(m, state.profile).winnerId);
+  const ties = groupNames(state).some((group) =>
+    standings(state, group).some((r) => r.tied && r.rank <= state.advancePerGroup),
+  );
+  return (
+    <div className="panel">
+      <div className="panel-heading">
+        <div>
+          <span className="eyebrow">NEXT STAGE</span>
+          <h2>本戦へ進む</h2>
+        </div>
+        <span className="status status-pending">各組 上位{state.advancePerGroup}名</span>
+      </div>
+      {!ready ? (
+        <p className="panel-help padded">
+          すべての予選試合が確定すると、進出者を確認して本戦を作成できます。
+        </p>
+      ) : (
+        <form
+          className="stack-form"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (
+              await confirm(
+                'この進出者とシード順で本戦を作成します。確定後は予選結果を変更できません。作成しますか？',
+              )
+            )
+              await send({ type: 'generate-finals', qualifiers: selected, justification });
+          }}
+        >
+          <p className="muted">
+            予選順位から進出者を選びました。上からシード順です。同順位の裁定と入れ替えは、理由を記録します。
+          </p>
+          {selected.map((id, index) => (
+            <label key={index}>
+              第{index + 1}シード
+              <select
+                value={id}
+                onChange={(e) =>
+                  setSelected((current) =>
+                    current.map((v, i) => (i === index ? e.target.value : v)),
+                  )
+                }
+              >
+                {state.players.map((p) => (
+                  <option value={p.id} key={p.id}>
+                    {p.group}組 · {p.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ))}
+          <label>
+            同順位の裁定・シード順の理由{ties && <span className="required">必須</span>}
+            <input
+              required={ties}
+              maxLength={300}
+              value={justification}
+              onChange={(e) => setJustification(e.target.value)}
+              placeholder="例：同順位の2名が抽選し、進出者を決定"
+            />
+          </label>
+          <button className="button primary" type="submit">
+            進出者を確定して本戦を作成 →
+          </button>
+        </form>
+      )}
+    </div>
+  );
 }
 
 export function Matches({ state, send }: { state: ControlState; send: Send }) {
   const [filter, setFilter] = useState<'all' | 'qualifying' | 'finals'>('all');
   const [selectedId, setSelectedId] = useState(state.currentMatchId);
-  const selected = state.matches.find(m => m.id === selectedId);
+  const selected = state.matches.find((m) => m.id === selectedId);
   const [view, setView] = useState<'list' | 'standings'>('list');
-  return <><div className="toolbar"><div className="segmented"><button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>対戦と記録</button><button className={view === 'standings' ? 'active' : ''} onClick={() => setView('standings')}>順位・トーナメント</button></div><a className="button subtle" href="/api/export?format=csv">↓ 結果CSV</a></div>
-    {view === 'list' ? <div className="match-management"><section className="panel"><div className="panel-heading"><h2>対戦一覧 <span className="count-pill">{state.matches.length}</span></h2><select aria-label="対戦の絞り込み" value={filter} onChange={e => setFilter(e.target.value as typeof filter)}><option value="all">すべて</option><option value="qualifying">予選</option><option value="finals">本戦</option></select></div><div className="match-list">{state.matches.filter(m => filter === 'all' || m.stage === filter).map(match => {
-      const result = evaluateMatch(match, state.profile);
-      return <button type="button" key={match.id} className={`match-row ${selectedId === match.id ? 'selected' : ''}`} onClick={() => setSelectedId(match.id)}><span className="match-row-meta"><b>{match.label}</b><span className={`status status-${result.status}`}>{statusLabels[result.status]}</span></span><span className="match-row-players"><strong>{playerName(state, match.a)}</strong><span>vs</span><strong>{match.bye ? '不戦枠' : playerName(state, match.b)}</strong></span><small>{match.games.length ? `${match.games.length}/2戦記録 · 得点 ${result.a.points}–${result.b.points} · 特殊P ${result.a.special}–${result.b.special}` : match.bye ? '次の試合へ進出' : '先攻・後攻は未登録'}{state.currentMatchId === match.id ? ' · 掲示対象' : ''}</small></button>;
-    })}{!state.matches.length && <div className="empty-state">参加者を登録し、予選の組み合わせを作成してください。</div>}</div></section><section className="panel">{selected ? <><div className="panel-heading"><span className="eyebrow">SCORE DESK</span><button className="button subtle compact" type="button" disabled={state.currentMatchId === selected.id} onClick={() => send({ type: 'select-match', matchId: selected.id })}>{state.currentMatchId === selected.id ? '● 掲示対象の試合' : 'この試合を掲示対象にする ↗'}</button></div><MatchEditor key={`${selected.id}-${selected.attempt}`} state={state} match={selected} send={send} /></> : <div className="empty-state">一覧から試合を選択してください。</div>}</section></div>
-      : <div className="standings-management"><div className="standings-panels">{groupNames(state).map(group => <section className="panel" key={group}><StandingsTable state={state} group={group} /></section>)}</div>{state.matches.some(m => m.stage === 'finals') ? <section className="panel bracket-panel"><div className="panel-heading"><h2>本戦トーナメント</h2></div><Bracket state={state} /></section> : <FinalsSetup key={state.matches.filter(m => evaluateMatch(m, state.profile).winnerId).length} state={state} send={send} />}</div>}
-  </>;
+  return (
+    <>
+      <div className="toolbar">
+        <div className="segmented">
+          <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
+            対戦と記録
+          </button>
+          <button
+            className={view === 'standings' ? 'active' : ''}
+            onClick={() => setView('standings')}
+          >
+            順位・トーナメント
+          </button>
+        </div>
+        <a className="button subtle" href="/api/export?format=csv">
+          ↓ 結果CSV
+        </a>
+      </div>
+      {view === 'list' ? (
+        <div className="match-management">
+          <section className="panel">
+            <div className="panel-heading">
+              <h2>
+                対戦一覧 <span className="count-pill">{state.matches.length}</span>
+              </h2>
+              <select
+                aria-label="対戦の絞り込み"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value as typeof filter)}
+              >
+                <option value="all">すべて</option>
+                <option value="qualifying">予選</option>
+                <option value="finals">本戦</option>
+              </select>
+            </div>
+            <div className="match-list">
+              {state.matches
+                .filter((m) => filter === 'all' || m.stage === filter)
+                .map((match) => {
+                  const result = evaluateMatch(match, state.profile);
+                  return (
+                    <button
+                      type="button"
+                      key={match.id}
+                      className={`match-row ${selectedId === match.id ? 'selected' : ''}`}
+                      onClick={() => setSelectedId(match.id)}
+                    >
+                      <span className="match-row-meta">
+                        <b>{match.label}</b>
+                        <span className={`status status-${result.status}`}>
+                          {statusLabels[result.status]}
+                        </span>
+                      </span>
+                      <span className="match-row-players">
+                        <strong>{playerName(state, match.a)}</strong>
+                        <span>vs</span>
+                        <strong>{match.bye ? '不戦枠' : playerName(state, match.b)}</strong>
+                      </span>
+                      <small>
+                        {match.games.length
+                          ? `${match.games.length}/2戦記録 · 得点 ${result.a.points}–${result.b.points} · 特殊P ${result.a.special}–${result.b.special}`
+                          : match.bye
+                            ? '次の試合へ進出'
+                            : '先攻・後攻は未登録'}
+                        {state.currentMatchId === match.id ? ' · 掲示対象' : ''}
+                      </small>
+                    </button>
+                  );
+                })}
+              {!state.matches.length && (
+                <div className="empty-state">
+                  参加者を登録し、予選の組み合わせを作成してください。
+                </div>
+              )}
+            </div>
+          </section>
+          <section className="panel">
+            {selected ? (
+              <>
+                <div className="panel-heading">
+                  <span className="eyebrow">SCORE DESK</span>
+                  <button
+                    className="button subtle compact"
+                    type="button"
+                    disabled={state.currentMatchId === selected.id}
+                    onClick={() => send({ type: 'select-match', matchId: selected.id })}
+                  >
+                    {state.currentMatchId === selected.id
+                      ? '● 掲示対象の試合'
+                      : 'この試合を掲示対象にする ↗'}
+                  </button>
+                </div>
+                <MatchEditor
+                  key={`${selected.id}-${selected.attempt}`}
+                  state={state}
+                  match={selected}
+                  send={send}
+                />
+              </>
+            ) : (
+              <div className="empty-state">一覧から試合を選択してください。</div>
+            )}
+          </section>
+        </div>
+      ) : (
+        <div className="standings-management">
+          <div className="standings-panels">
+            {groupNames(state).map((group) => (
+              <section className="panel" key={group}>
+                <StandingsTable state={state} group={group} />
+              </section>
+            ))}
+          </div>
+          {state.matches.some((m) => m.stage === 'finals') ? (
+            <section className="panel bracket-panel">
+              <div className="panel-heading">
+                <h2>本戦トーナメント</h2>
+              </div>
+              <Bracket state={state} />
+            </section>
+          ) : (
+            <FinalsSetup
+              key={state.matches.filter((m) => evaluateMatch(m, state.profile).winnerId).length}
+              state={state}
+              send={send}
+            />
+          )}
+        </div>
+      )}
+    </>
+  );
 }
 
 export function Settings({ state, send }: { state: ControlState; send: Send }) {
   const confirm = useConfirmation();
-  const [title, setTitle] = useState(state.title), [subtitle, setSubtitle] = useState(state.subtitle);
-  const [profile, setProfile] = useState(state.profile), [advance, setAdvance] = useState(state.advancePerGroup);
+  const [title, setTitle] = useState(state.title),
+    [subtitle, setSubtitle] = useState(state.subtitle);
+  const [profile, setProfile] = useState(state.profile),
+    [advance, setAdvance] = useState(state.advancePerGroup);
   const [uploadError, setUploadError] = useState('');
-  return <div className="settings-grid"><div className="stack"><section className="panel"><div className="panel-heading"><div><span className="eyebrow">TOURNAMENT</span><h2>大会の設定</h2></div></div><form className="stack-form" onSubmit={async e => { e.preventDefault(); await send({ type: 'settings', title, subtitle, profile, advancePerGroup: advance }); }}><label>大会名<input required maxLength={60} value={title} onChange={e => setTitle(e.target.value)} /></label><label>サブタイトル<input maxLength={120} value={subtitle} onChange={e => setSubtitle(e.target.value)} /></label><label>計算方式<select disabled={state.matches.some(m => m.started)} value={profile} onChange={e => setProfile(e.target.value as typeof profile)}><option value="kushiro">釧路向け · 特殊ポイント → 合計得点</option><option value="asahikawa">旭川向け · ゲーム勝数 → 換算得点</option></select><small>試合開始後の変更はできません。詳細は提案書の判断事項を参照。</small></label><label>各グループから本戦に進む人数<input required type="number" min="1" max="8" disabled={state.matches.some(m => m.stage === 'finals')} value={advance} onChange={e => setAdvance(Number(e.target.value))} /></label><div className="rule-explanation"><b>判定の見える化</b><p>{profile === 'kushiro' ? 'PUT・包囲・相手の自滅による勝利を各1特殊Pとして集計。2戦の特殊Pが多い側、同値なら合計得点が多い側が勝者です。' : '2戦のゲーム勝数を比較し、同値なら換算得点を比較。PUT・包囲による敗者は0点、通信切断・移動違反・自己包囲による敗者は残りターン数のマイナスに換算します。'}</p><p>予選順位：試合勝数 → {profile === 'kushiro' ? '特殊P → ' : ''}得点。同順位は主催者が理由を記録して進出を裁定します。</p></div><button className="button primary" type="submit">設定を保存</button></form></section>
-    <section className="panel"><div className="panel-heading"><h2>幕間のロゴ</h2></div><div className="stack-form">{state.logo && <img className="logo-thumbnail" src={state.logo} alt="登録中の大会ロゴ" />}<label className="upload-box">＋ ロゴ画像を選ぶ<small>PNG / JPEG / WebP · 1 MBまで</small><input aria-label="幕間ロゴ画像" type="file" accept="image/png,image/jpeg,image/webp" onChange={async e => {
-      const file = e.target.files?.[0]; if (!file) return; setUploadError('');
-      if (file.size > 1_000_000 || !['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) { setUploadError('PNG・JPEG・WebPの1 MB以下の画像を選んでください。'); return; }
-      const reader = new FileReader(); reader.onerror = () => setUploadError('画像を読み込めませんでした。'); reader.onload = () => { void send({ type: 'logo', data: String(reader.result) }); }; reader.readAsDataURL(file);
-    }} /></label>{uploadError && <p className="danger-text" role="alert">{uploadError}</p>}{state.logo && <button className="text-button" type="button" onClick={() => send({ type: 'logo', data: null })}>標準ロゴに戻す</button>}</div></section></div>
-    <div className="stack"><section className="panel"><div className="panel-heading"><div><span className="eyebrow">DATA & HISTORY</span><h2>記録を手元に</h2></div><span className="saved-label">● 保存済み</span></div><div className="stack-form"><p>結果と操作履歴は、このサーバーに自動保存されます。</p><div className="export-buttons"><a className="button subtle" href="/api/export?format=csv">↓ 結果CSV</a><a className="button subtle" href="/api/export">↓ 全記録JSON</a></div><div className="reset-options"><b>大会を切り替える</b><p>現在の大会はサーバー内に退避してから切り替えます。確認用に全記録JSONも保存しておくことをおすすめします。</p><button className="button subtle" type="button" onClick={async () => { if (await confirm('現在の大会を退避して、参加者が空の新しい大会を作成しますか？')) void send({ type: 'reset', demo: false, confirmation: 'RESET' }); }}>空の大会を作成</button><button className="text-button" type="button" onClick={async () => { if (await confirm('現在の大会を退避して、架空の参加者によるサンプルに切り替えますか？')) void send({ type: 'reset', demo: true, confirmation: 'RESET' }); }}>サンプルに戻す</button></div></div></section>
-    <section className="panel"><div className="panel-heading"><h2>操作履歴</h2><span className="count-pill">{state.audit.length}</span></div><div className="audit-list">{state.audit.slice(-40).reverse().map(log => <div className="audit-item" key={log.id}><time>{new Date(log.at).toLocaleString('ja-JP', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}</time><p>{log.detail}</p></div>)}{!state.audit.length && <div className="empty-state">操作すると、ここに履歴が残ります。</div>}</div><p className="panel-help padded">最新40件を表示。全件はJSONで保存できます。</p></section></div>
-  </div>;
+  return (
+    <div className="settings-grid">
+      <div className="stack">
+        <section className="panel">
+          <div className="panel-heading">
+            <div>
+              <span className="eyebrow">TOURNAMENT</span>
+              <h2>大会の設定</h2>
+            </div>
+          </div>
+          <form
+            className="stack-form"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              await send({ type: 'settings', title, subtitle, profile, advancePerGroup: advance });
+            }}
+          >
+            <label>
+              大会名
+              <input
+                required
+                maxLength={60}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </label>
+            <label>
+              サブタイトル
+              <input
+                maxLength={120}
+                value={subtitle}
+                onChange={(e) => setSubtitle(e.target.value)}
+              />
+            </label>
+            <label>
+              計算方式
+              <select
+                disabled={state.matches.some((m) => m.started)}
+                value={profile}
+                onChange={(e) => setProfile(e.target.value as typeof profile)}
+              >
+                <option value="kushiro">釧路向け · 特殊ポイント → 合計得点</option>
+                <option value="asahikawa">旭川向け · ゲーム勝数 → 換算得点</option>
+              </select>
+              <small>試合開始後の変更はできません。詳細は提案書の判断事項を参照。</small>
+            </label>
+            <label>
+              各グループから本戦に進む人数
+              <input
+                required
+                type="number"
+                min="1"
+                max="8"
+                disabled={state.matches.some((m) => m.stage === 'finals')}
+                value={advance}
+                onChange={(e) => setAdvance(Number(e.target.value))}
+              />
+            </label>
+            <div className="rule-explanation">
+              <b>判定の見える化</b>
+              <p>
+                {profile === 'kushiro'
+                  ? 'PUT・包囲・相手の自滅による勝利を各1特殊Pとして集計。2戦の特殊Pが多い側、同値なら合計得点が多い側が勝者です。'
+                  : '2戦のゲーム勝数を比較し、同値なら換算得点を比較。PUT・包囲による敗者は0点、通信切断・移動違反・自己包囲による敗者は残りターン数のマイナスに換算します。'}
+              </p>
+              <p>
+                予選順位：試合勝数 → {profile === 'kushiro' ? '特殊P → ' : ''}
+                得点。同順位は主催者が理由を記録して進出を裁定します。
+              </p>
+            </div>
+            <button className="button primary" type="submit">
+              設定を保存
+            </button>
+          </form>
+        </section>
+        <section className="panel">
+          <div className="panel-heading">
+            <h2>幕間のロゴ</h2>
+          </div>
+          <div className="stack-form">
+            {state.logo && (
+              <img className="logo-thumbnail" src={state.logo} alt="登録中の大会ロゴ" />
+            )}
+            <label className="upload-box">
+              ＋ ロゴ画像を選ぶ<small>PNG / JPEG / WebP · 1 MBまで</small>
+              <input
+                aria-label="幕間ロゴ画像"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setUploadError('');
+                  if (
+                    file.size > 1_000_000 ||
+                    !['image/png', 'image/jpeg', 'image/webp'].includes(file.type)
+                  ) {
+                    setUploadError('PNG・JPEG・WebPの1 MB以下の画像を選んでください。');
+                    return;
+                  }
+                  const reader = new FileReader();
+                  reader.onerror = () => setUploadError('画像を読み込めませんでした。');
+                  reader.onload = () => {
+                    void send({ type: 'logo', data: String(reader.result) });
+                  };
+                  reader.readAsDataURL(file);
+                }}
+              />
+            </label>
+            {uploadError && (
+              <p className="danger-text" role="alert">
+                {uploadError}
+              </p>
+            )}
+            {state.logo && (
+              <button
+                className="text-button"
+                type="button"
+                onClick={() => send({ type: 'logo', data: null })}
+              >
+                標準ロゴに戻す
+              </button>
+            )}
+          </div>
+        </section>
+      </div>
+      <div className="stack">
+        <section className="panel">
+          <div className="panel-heading">
+            <div>
+              <span className="eyebrow">DATA & HISTORY</span>
+              <h2>記録を手元に</h2>
+            </div>
+            <span className="saved-label">● 保存済み</span>
+          </div>
+          <div className="stack-form">
+            <p>結果と操作履歴は、このサーバーに自動保存されます。</p>
+            <div className="export-buttons">
+              <a className="button subtle" href="/api/export?format=csv">
+                ↓ 結果CSV
+              </a>
+              <a className="button subtle" href="/api/export">
+                ↓ 全記録JSON
+              </a>
+            </div>
+            <div className="reset-options">
+              <b>大会を切り替える</b>
+              <p>
+                現在の大会はサーバー内に退避してから切り替えます。確認用に全記録JSONも保存しておくことをおすすめします。
+              </p>
+              <button
+                className="button subtle"
+                type="button"
+                onClick={async () => {
+                  if (await confirm('現在の大会を退避して、参加者が空の新しい大会を作成しますか？'))
+                    void send({ type: 'reset', demo: false, confirmation: 'RESET' });
+                }}
+              >
+                空の大会を作成
+              </button>
+              <button
+                className="text-button"
+                type="button"
+                onClick={async () => {
+                  if (
+                    await confirm(
+                      '現在の大会を退避して、架空の参加者によるサンプルに切り替えますか？',
+                    )
+                  )
+                    void send({ type: 'reset', demo: true, confirmation: 'RESET' });
+                }}
+              >
+                サンプルに戻す
+              </button>
+            </div>
+          </div>
+        </section>
+        <section className="panel">
+          <div className="panel-heading">
+            <h2>操作履歴</h2>
+            <span className="count-pill">{state.audit.length}</span>
+          </div>
+          <div className="audit-list">
+            {state.audit
+              .slice(-40)
+              .reverse()
+              .map((log) => (
+                <div className="audit-item" key={log.id}>
+                  <time>
+                    {new Date(log.at).toLocaleString('ja-JP', {
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                    })}
+                  </time>
+                  <p>{log.detail}</p>
+                </div>
+              ))}
+            {!state.audit.length && (
+              <div className="empty-state">操作すると、ここに履歴が残ります。</div>
+            )}
+          </div>
+          <p className="panel-help padded">最新40件を表示。全件はJSONで保存できます。</p>
+        </section>
+      </div>
+    </div>
+  );
 }

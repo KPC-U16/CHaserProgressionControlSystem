@@ -1,2 +1,4 @@
 import ConsoleApp from '@/components/ConsoleApp';
-export default function Page() { return <ConsoleApp initialTab="matches" />; }
+export default function Page() {
+  return <ConsoleApp initialTab="matches" />;
+}
