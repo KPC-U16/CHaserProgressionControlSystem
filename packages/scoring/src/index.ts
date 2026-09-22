@@ -31,3 +31,5 @@ export function aggregateMatch(halves: SlotValues[]): SlotValues {
   }
   return result;
 }
+
+export * from './match';
