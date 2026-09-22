@@ -20,22 +20,22 @@ const globalBus = globalThis as unknown as { __chrosControlBus?: EventEmitter };
 const bus = (globalBus.__chrosControlBus ??= new EventEmitter());
 bus.setMaxListeners(0);
 
-function writeState(state: ControlState) {
+function writeStateAtomically(state: ControlState) {
   mkdirSync(dataDir, { recursive: true });
-  const temporary = `${dataFile}.tmp`;
-  const fd = openSync(temporary, 'w', 0o600);
+  const temporaryFile = `${dataFile}.tmp`;
+  const fileDescriptor = openSync(temporaryFile, 'w', 0o600);
   try {
-    writeFileSync(fd, JSON.stringify(state));
-    fsyncSync(fd);
+    writeFileSync(fileDescriptor, JSON.stringify(state));
+    fsyncSync(fileDescriptor);
   } finally {
-    closeSync(fd);
+    closeSync(fileDescriptor);
   }
-  renameSync(temporary, dataFile);
+  renameSync(temporaryFile, dataFile);
 }
 export function readState(): ControlState {
   if (!existsSync(dataFile)) {
     const state = createInitialState();
-    writeState(state);
+    writeStateAtomically(state);
     return state;
   }
   // 壊れた保存ファイルはサンプルで上書きしない。
@@ -50,12 +50,12 @@ export function dispatch(command: Command, expectedRevision: number): ControlSta
       '別の操作で更新されました。最新の表示を確認してから、もう一度操作してください。',
     );
   const next = stateSchema.parse(applyCommand(previous, command));
-  const backup =
+  const backupFilename =
     command.type === 'reset'
       ? `archive-${Date.now()}-${previous.revision}.json`
       : 'state.previous.json';
-  writeFileSync(path.join(dataDir, backup), JSON.stringify(previous), { mode: 0o600 });
-  writeState(next);
+  writeFileSync(path.join(dataDir, backupFilename), JSON.stringify(previous), { mode: 0o600 });
+  writeStateAtomically(next);
   bus.emit('state', next);
   return next;
 }

@@ -1,55 +1,61 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Command, ControlState } from '@chros/shared';
+import type { ControlState } from '@chros/shared';
+import type { SendCommand } from './control-types';
 export function useControl() {
   const [state, setState] = useState<ControlState | null>(null);
   const [connected, setConnected] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
-  const revision = useRef(0),
-    busy = useRef(false);
-  const accept = useCallback((next: ControlState) => {
-    if (next.revision < revision.current) return;
-    revision.current = next.revision;
+  const latestRevision = useRef(0);
+
+  const sendingCommand = useRef(false);
+
+  const acceptSnapshot = useCallback((next: ControlState) => {
+    if (next.revision < latestRevision.current) return;
+    latestRevision.current = next.revision;
     setState(next);
   }, []);
+
   useEffect(() => {
     const events = new EventSource('/api/stream');
     events.addEventListener('snapshot', (event) => {
-      accept(JSON.parse((event as MessageEvent).data));
+      acceptSnapshot(JSON.parse((event as MessageEvent).data));
       setConnected(true);
     });
     events.onerror = () => setConnected(false);
     return () => events.close();
-  }, [accept]);
-  const send = useCallback(
-    async (command: Command): Promise<boolean> => {
-      if (busy.current) return false;
-      busy.current = true;
+  }, [acceptSnapshot]);
+
+  const send = useCallback<SendCommand>(
+    async (command) => {
+      if (sendingCommand.current) return false;
+      sendingCommand.current = true;
       setPending(true);
       setError('');
       try {
         const response = await fetch('/api/state', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ expectedRevision: revision.current, command }),
+          body: JSON.stringify({ expectedRevision: latestRevision.current, command }),
         });
-        const data = await response.json();
+        const responseBody = await response.json();
         if (!response.ok) {
-          if (data.state) accept(data.state);
-          throw new Error(data.error || '保存できませんでした。');
+          if (responseBody.state) acceptSnapshot(responseBody.state);
+          throw new Error(responseBody.error || '保存できませんでした。');
         }
-        accept(data);
+        acceptSnapshot(responseBody);
         return true;
       } catch (error) {
         setError(error instanceof Error ? error.message : '接続を確認してください。');
         return false;
       } finally {
-        busy.current = false;
+        sendingCommand.current = false;
         setPending(false);
       }
     },
-    [accept],
+    [acceptSnapshot],
   );
+
   return { state, connected, pending, error, setError, send };
 }
