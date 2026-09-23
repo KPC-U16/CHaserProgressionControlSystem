@@ -33,7 +33,7 @@ export const reasonLabels: Record<Reason, string> = {
   put: 'PUT',
   surround: '相手を包囲',
   disconnect: '相手の通信切断',
-  'illegal-move': '相手の移動違反',
+  'illegal-move': '相手の壁埋まり',
   'self-surround': '相手の自己包囲',
 };
 const id = z.string().min(1).max(100);
