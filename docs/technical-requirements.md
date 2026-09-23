@@ -10,13 +10,13 @@
 | 配置 | 責務 |
 | --- | --- |
 | `packages/shared/src/control.ts` | 状態・コマンド・表示ラベル・Zod検証 |
-| `packages/scoring/src/match.ts` | 各戦・2戦合計の判定、予選順位。I/Oを持たない |
+| `packages/scoring/src/match.ts`、`standings.ts` | 各戦・2戦合計の判定と予選順位。I/Oを持たない |
 | `chros/lib/tournament.ts` | 総当たり・本戦の生成、入力保護、再試合、監査記録を含む状態遷移 |
 | `chros/lib/store.ts` | JSON永続化、更新番号検証、保存後のSSE通知 |
 | `chros/lib/use-control.ts` | ブラウザーでのSSE購読、コマンド送信、通信状態とエラー表示 |
 | `chros/components/ConsoleApp.tsx` | 進行管理と画面選択 |
 | `chros/components/MatchEditor.tsx` | 先攻登録、各戦の結果入力・訂正・再試合 |
-| `chros/components/Management.tsx` | 参加者、順位、本戦作成、大会設定、エクスポート、履歴 |
+| `chros/components/management/` | 参加者、順位、本戦作成、大会設定、エクスポート、履歴 |
 | `chros/components/Rundown.tsx` | 表示順の編集と手動進行 |
 | `chros/components/Board.tsx` | 会場掲示とプレビューの共通表示 |
 
