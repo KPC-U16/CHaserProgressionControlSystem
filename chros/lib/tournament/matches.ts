@@ -38,5 +38,5 @@ export function assertEditableMatch(state: ControlState, match: Match) {
   const finalsExist = state.matches.some((candidate) => candidate.stage === 'finals');
   const qualifyingIsLocked = match.stage === 'qualifying' && finalsExist;
   assertAllowed(!qualifyingIsLocked, '本戦の組み合わせ確定後は予選結果を変更できません。');
-  assertAllowed(!match.bye, '不戦進出の枠には得点を入力できません。');
+  assertAllowed(!match.bye, '不戦進出の枠にはスコアを入力できません。');
 }

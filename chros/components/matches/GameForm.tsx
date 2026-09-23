@@ -49,7 +49,7 @@ export default function GameForm({
 
   let resultLabel = '勝者を選択してください';
   if (!scoreInputs.a || !scoreInputs.b) {
-    resultLabel = '両者の得点を入力してください';
+    resultLabel = '両者のスコアを入力してください';
   } else if (result.winner) {
     resultLabel = `${playerName(state, match[result.winner])} の勝利`;
   } else if (game.reason === 'points') {
@@ -74,7 +74,7 @@ export default function GameForm({
             <strong>{playerName(state, match[side])}</strong>
             <div>
               <input
-                aria-label={`第${number}戦 ${playerName(state, match[side])}の得点`}
+                aria-label={`第${number}戦 ${playerName(state, match[side])}のスコア`}
                 type="number"
                 required
                 min="0"
@@ -109,7 +109,7 @@ export default function GameForm({
           <>
             勝利した参加者{' '}
             {decidedByScore ? (
-              <small>得点比較のため、得点から自動で判定します</small>
+              <small>スコア比較のため、スコアから自動で判定します</small>
             ) : (
               <span className="required">必須</span>
             )}
@@ -150,7 +150,7 @@ export default function GameForm({
         <small>
           {game.reason !== 'points' ? '勝者に特殊ポイント +1' : '特殊ポイントなし'}
           {state.profile === 'asahikawa'
-            ? ` · 換算得点 ${result.a.points} : ${result.b.points}`
+            ? ` · 換算スコア ${result.a.points} : ${result.b.points}`
             : ''}
         </small>
       </div>

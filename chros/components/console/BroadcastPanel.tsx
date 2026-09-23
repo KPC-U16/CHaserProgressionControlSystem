@@ -39,7 +39,7 @@ export function BroadcastPanel({ state, send }: ControlProps) {
           <i className="green-dot" />
           {phaseLabels[state.phase]} · {sceneLabels[state.scene]} を掲示中
         </span>
-        <small>各戦の記録後に得点を更新</small>
+        <small>各戦の記録後にスコアを更新</small>
       </div>
       <div className="scene-controls">
         <div className="scene-toolbar">

@@ -20,7 +20,7 @@ export function CurrentMatchPanel({
       <div className="panel-heading">
         <div>
           <span className="eyebrow">NOW PLAYING</span>
-          <h2>掲示する試合・得点入力</h2>
+          <h2>掲示する試合・スコア入力</h2>
         </div>
         <button className="text-button" type="button" onClick={goMatches}>
           全試合を見る →

@@ -30,7 +30,7 @@ export function StandingsTable({
             <th>参加者</th>
             <th>勝–敗</th>
             <th>特殊P</th>
-            <th>{state.profile === 'asahikawa' ? '換算得点' : '得点'}</th>
+            <th>{state.profile === 'asahikawa' ? '換算スコア' : 'スコア'}</th>
           </tr>
         </thead>
         <tbody>

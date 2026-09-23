@@ -13,7 +13,7 @@ export const scenes = ['ceremony', 'match', 'result', 'standings', 'bracket', 'l
 export type Scene = (typeof scenes)[number];
 export const sceneLabels: Record<Scene, string> = {
   ceremony: '進行案内',
-  match: '対戦・得点',
+  match: '対戦・スコア',
   result: '試合結果',
   standings: '予選順位',
   bracket: '本戦トーナメント',
@@ -29,7 +29,7 @@ export const reasons = [
 ] as const;
 export type Reason = (typeof reasons)[number];
 export const reasonLabels: Record<Reason, string> = {
-  points: '得点比較',
+  points: 'スコア比較',
   put: 'PUT',
   surround: '相手を包囲',
   disconnect: '相手の通信切断',
