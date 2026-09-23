@@ -307,7 +307,7 @@ figcaption {
   margin: 22px 0;
   border-radius: 0 10px 10px 0;
 }
-.note strong:first-child {
+.note > strong:first-child {
   display: block;
   margin-bottom: 4px;
 }
@@ -318,7 +318,7 @@ figcaption {
   background: var(--amber-soft);
   border-color: var(--amber);
 }
-.note.warning strong:first-child {
+.note.warning > strong:first-child {
   color: var(--amber);
 }
 .path {
