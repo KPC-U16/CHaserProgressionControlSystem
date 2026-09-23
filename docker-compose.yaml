@@ -1,36 +1,34 @@
 services:
   app:
     build:
-      context: ./chros
-      dockerfile: Dockerfile
+      # workspace の依存を解決するため、build context は monorepo のルート
+      context: .
+      dockerfile: chros/Dockerfile
     ports:
       - "3000:3000"
     environment:
-      #NOTE: 本番環境の時は、以下の変数を変えること。
-      - NODE_ENV=development
-
-  app-websock:
-    build:
-      context: ./chros-websock
-      dockerfile: Dockerfile
-    ports:
-      - "3001:3001"
-    environment:
-      #NOTE: 本番環境の時は、以下の変数を変えること。
-      - NODE_ENV=development
+      - NODE_ENV=production
+      - CHROS_DATA_DIR=/data/chros
+    volumes:
+      - chros-data:/data/chros
 
   db:
-    image: postgres:latest
+    profiles: [database]
+    image: postgres:17
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=database
     ports:
       - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d database"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
-  score:
-    build:
-      context: ./chros-score
-      dockerfile: Dockerfile
-    ports:
-      - "3002:3002"
+volumes:
+  chros-data:
+  db-data:

@@ -1,0 +1,7 @@
+**/node_modules
+**/.next
+**/.chros
+**/.env
+**/.env.local
+.git
+docs

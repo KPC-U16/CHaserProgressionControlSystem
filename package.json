@@ -1,0 +1,21 @@
+{
+  "name": "chros-monorepo",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter chros dev",
+    "build": "pnpm --filter chros build",
+    "start": "pnpm --filter chros start",
+    "test": "pnpm -r test",
+    "typecheck": "tsc --noEmit --noUnusedLocals --noUnusedParameters -p packages/shared && tsc --noEmit --noUnusedLocals --noUnusedParameters -p packages/scoring && tsc --noEmit --noUnusedLocals --noUnusedParameters -p chros",
+    "format": "prettier --write \"chros/{app,components,lib}/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.ts\" \"scripts/**/*.mjs\" \"chros/public/manual/**/*.{html,css,js}\"",
+    "format:check": "prettier --check \"chros/{app,components,lib}/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.ts\" \"scripts/**/*.mjs\" \"chros/public/manual/**/*.{html,css,js}\""
+  },
+  "devDependencies": {
+    "prettier": "3.9.8",
+    "typescript": "^5.6.0"
+  }
+}

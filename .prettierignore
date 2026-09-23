@@ -1,0 +1,5 @@
+**/node_modules/
+**/.next/
+**/.chros/
+chros/app/generated/
+pnpm-lock.yaml
