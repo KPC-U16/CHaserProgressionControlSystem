@@ -119,8 +119,11 @@
             </table>
           </div>
           <p class="small">
-            コマンドはmacOS／Linuxのシェルを基準に記載しています。WindowsではWSL等の同等の環境を使ってください。Node.jsを先に用意し、pnpmがなければ
-            <code>npm install --global pnpm@9.12.0</code> で指定版を入れます。
+            コマンドはmacOS／Linuxのシェルを基準に記載しています。WindowsではWSL等の同等の環境を使ってください。Node.jsを先に用意し、pnpmがなければ次のコマンドで指定版を入れます。
+          </p>
+          <pre><code>npm install --global pnpm@9.12.0</code></pre>
+          <p class="small">
+            長いコードや表は、枠内を横にスクロールして読めます。コマンド末尾のバックスラッシュ（<code>\</code>）は次の行へ続く印です。実行するときは、続く行もまとめてコピーしてください。
           </p>
           <ol class="steps">
             <li>
@@ -190,7 +193,6 @@ git switch -c codex/your-change</code></pre>
                 width="1000"
                 height="550"
                 alt="運営画面からAPIに操作を送り、大会処理と採点を経てJSON保存。保存後にSSEが運営画面と会場掲示へ全状態を配信"
-                loading="lazy"
             /></a>
             <figcaption>
               データの流れ。<code>scoring</code>は入出力を持たない計算、<code>store</code>は保存と通知を担当します。
@@ -330,19 +332,20 @@ git switch -c codex/your-change</code></pre>
           <ul>
             <li>
               <code>match</code>、<code>player</code>、<code>recordedGame</code>
-              のように役割が伝わる名前を使う。
+              のように役割が伝わる名前を使います。
             </li>
             <li>
-              関連する処理をまとめ、採点・保存・HTTP応答・描画の責任を分ける。単純な一行まで分割しない。
+              関連する処理をまとめ、採点・保存・HTTP応答・描画の責任を分けます。単純な一行まで分割する必要はありません。
             </li>
-            <li>入力不備などの例外は先に扱い、深い条件分岐を減らす。</li>
+            <li>入力不備などの例外は先に扱い、深い条件分岐を減らします。</li>
             <li>
               複数段階の操作には
-              <code>saveResult</code> のように名前を付ける。単純な入力更新は入力欄の近くに置く。
+              <code>saveResult</code>
+              のように名前を付けます。単純な入力更新は入力欄の近くに置きます。
             </li>
             <li>
-              <strong>コメントは理由や制約の説明に絞る。</strong
-              >関数名から分かる処理の言い換えは増やさない。
+              <strong>コメントは理由や制約の説明に絞ります。</strong
+              >関数名から分かる処理の言い換えは増やしません。
             </li>
           </ul>
           <p class="small">
@@ -392,25 +395,25 @@ pnpm build</code></pre>
                 <tr>
                   <th scope="row">format / format:check</th>
                   <td>
-                    Prettierで書式を統一・検査。HTML手順書のCSS・JSも対象です。命名の良し悪しは別途レビューします。
+                    Prettierで書式を統一・検査します。HTML手順書のCSS・JSも対象です。命名の良し悪しは別途レビューします。
                   </td>
                 </tr>
                 <tr>
                   <th scope="row">typecheck</th>
                   <td>
-                    shared・scoring・アプリの型、未使用の変数・引数を検査。エラーなしで終了すること。
+                    shared・scoring・アプリの型、未使用の変数・引数を検査します。エラーなしで終了することを確認します。
                   </td>
                 </tr>
                 <tr>
                   <th scope="row">test</th>
                   <td>
-                    採点と大会進行のユニットテスト。作成時点では29件。変更に応じた境界条件を追加します。
+                    採点と大会進行のユニットテストを実行します。作成時点では29件です。変更に応じた境界条件を追加します。
                   </td>
                 </tr>
                 <tr>
                   <th scope="row">build</th>
                   <td>
-                    Next.jsの本番ビルド。実行中の開発サーバーを止めてから行います。同じ
+                    Next.jsの本番ビルドを作成します。実行中の開発サーバーを止めてから行います。同じ
                     <code>.next</code> を使うためです。
                   </td>
                 </tr>
@@ -437,7 +440,9 @@ pnpm build</code></pre>
           </p>
           <pre><code>pnpm build
 CHROS_TEST_DATA="$(mktemp -d)"
-CHROS_DATA_DIR="$CHROS_TEST_DATA" pnpm --filter chros exec next start --hostname 127.0.0.1 --port 3114</code></pre>
+CHROS_DATA_DIR="$CHROS_TEST_DATA" \
+  pnpm --filter chros exec next start \
+  --hostname 127.0.0.1 --port 3114</code></pre>
           <p><strong>ターミナルB：</strong>ルートで実行。</p>
           <pre><code>node scripts/smoke-prototype.mjs http://127.0.0.1:3114 --reset-test-data</code></pre>
           <p>
@@ -451,25 +456,35 @@ CHROS_DATA_DIR="$CHROS_TEST_DATA" pnpm --filter chros exec next start --hostname
               <label
                 ><input
                   type="checkbox"
-                />運営と掲示を別タブで開き、保存と画面切替が反映される</label
+                />運営と掲示を別タブで開き、保存と画面切り替えが反映されることを確認しました。</label
               >
-            </li>
-            <li>
-              <label
-                ><input type="checkbox" />第2戦のCOOL／HOTが反転し、入力欄の人物は変わらない</label
-              >
-            </li>
-            <li>
-              <label><input type="checkbox" />確認画面のキャンセル・実行が両方とも動く</label>
-            </li>
-            <li>
-              <label><input type="checkbox" />訂正理由、再試合、予選確定後の保護が機能する</label>
             </li>
             <li>
               <label
                 ><input
                   type="checkbox"
-                />表示順の編集・保存・「次へ」、長い順位表のページ送りが動く</label
+                />第2戦のCOOL／HOTが反転し、入力欄の人物が変わらないことを確認しました。</label
+              >
+            </li>
+            <li>
+              <label
+                ><input
+                  type="checkbox"
+                />確認画面のキャンセル・実行が両方とも動くことを確認しました。</label
+              >
+            </li>
+            <li>
+              <label
+                ><input
+                  type="checkbox"
+                />訂正理由、再試合、予選確定後の保護が機能することを確認しました。</label
+              >
+            </li>
+            <li>
+              <label
+                ><input
+                  type="checkbox"
+                />表示順の編集・保存・「次へ」、長い順位表のページ送りが動くことを確認しました。</label
               >
             </li>
           </ul>
@@ -498,7 +513,9 @@ pnpm build</code></pre>
                 <code>/absolute/path/to/event-data</code>
                 を、書き込める実際の絶対パスに置き換えます。
               </p>
-              <pre><code>CHROS_DATA_DIR=/absolute/path/to/event-data pnpm --filter chros exec next start --hostname 0.0.0.0 --port 3000</code></pre>
+              <pre><code>CHROS_DATA_DIR=/absolute/path/to/event-data \
+  pnpm --filter chros exec next start \
+  --hostname 0.0.0.0 --port 3000</code></pre>
             </li>
             <li>
               <strong>端末ごとにURLを開く</strong>
@@ -685,22 +702,26 @@ pnpm build</code></pre>
                 <tr>
                   <th scope="row">400</th>
                   <td>形式・入力・操作条件の不備</td>
-                  <td>応答の <code>error</code> と入力内容を読む。</td>
+                  <td>応答の <code>error</code> と入力内容を確認します。</td>
                 </tr>
                 <tr>
                   <th scope="row">403</th>
                   <td>別のOriginからの書き込み</td>
-                  <td>画面とAPIのホスト・ポートを合わせる。検証を無効化して回避しない。</td>
+                  <td>
+                    画面とAPIのホスト・ポートを合わせます。検証を無効化して回避しないでください。
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">409</th>
                   <td>他の操作により更新番号が進んでいる</td>
-                  <td>返された最新状態を確認し、必要な操作だけ再送。無条件に自動再送しない。</td>
+                  <td>
+                    返された最新状態を確認し、必要な操作だけ再送します。無条件に自動再送しないでください。
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">413</th>
                   <td>要求のサイズが上限を超えた</td>
-                  <td>ロゴ等のサイズと送信内容を確認する。</td>
+                  <td>ロゴ等のサイズと送信内容を確認します。</td>
                 </tr>
               </tbody>
             </table>
@@ -777,7 +798,9 @@ pnpm build</code></pre>
                 本番の保存先を使わず、運営・掲示を実際に操作します。基本の撮影幅は1440px。説明するパネルをPNG・JPEG・WebPで撮影し、リポジトリの外へ一時保存します。次は、識別名
                 <code>score-entry</code> の画像だけを差し替える例です。
               </p>
-              <pre><code>node scripts/embed-manual-image.mjs chros/public/manual/operations.html score-entry /tmp/new-score-entry.png</code></pre>
+              <pre><code>node scripts/embed-manual-image.mjs \
+  chros/public/manual/operations.html \
+  score-entry /tmp/new-score-entry.png</code></pre>
               <p>
                 画像はBase64に変換され、HTMLの
                 <code>src</code> に入ります。元の画像はGitへ追加しません。識別名はHTMLの
