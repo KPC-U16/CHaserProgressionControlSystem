@@ -165,10 +165,20 @@ small {
   width: 100%;
 }
 .choice-group > legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
   padding: 0;
   margin-bottom: 9px;
   font-size: 12px;
   font-weight: 600;
+}
+.choice-clear {
+  margin-left: auto;
+  padding: 2px 4px;
+  font-size: 10px;
+  white-space: nowrap;
 }
 .choice-group > legend small {
   margin-left: 6px;
@@ -180,6 +190,15 @@ small {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
   gap: 8px;
+}
+.choice-sections {
+  display: grid;
+  gap: 8px;
+}
+.choice-sections > .choice-options:not(:only-child) {
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-template-columns: none;
 }
 .choice {
   position: relative;
@@ -2225,6 +2244,12 @@ small {
   }
   .game-tabs {
     gap: 13px;
+  }
+  .choice-sections > .choice-options:not(:only-child) .choice {
+    padding: 8px 6px;
+  }
+  .choice-sections > .choice-options:not(:only-child) .choice strong {
+    font-size: 11px;
   }
   .score-input {
     padding: 12px;
