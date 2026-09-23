@@ -1,0 +1,79 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1000"
+  height="550"
+  viewBox="0 0 1000 550"
+  role="img"
+  aria-labelledby="title desc"
+>
+  <title id="title">入力から保存、掲示までのデータの流れ</title>
+  <desc id="desc">
+    運営画面が更新番号と操作をPOSTし、APIが検証、tournamentが進行、scoringが判定を扱います。storeがJSONへ保存した後、SSEが全状態を運営画面と会場掲示へ配信します。
+  </desc>
+  <rect width="1000" height="550" rx="16" fill="white" />
+  <g font-family="sans-serif">
+    <rect x="342" y="16" width="318" height="407" rx="16" fill="#f3f6f5" stroke="#d7e1e3" />
+    <text x="501" y="43" text-anchor="middle" font-size="14" fill="#546773">
+      単一の Next.js / Node プロセス
+    </text>
+    <g fill="#e4f2ee" stroke="#b9d4c9">
+      <rect x="24" y="62" width="250" height="92" rx="10" />
+      <rect x="24" y="427" width="250" height="92" rx="10" />
+    </g>
+    <g fill="white" stroke="#d7e1e3">
+      <rect x="365" y="62" width="272" height="80" rx="10" />
+      <rect x="365" y="171" width="272" height="92" rx="10" />
+      <rect x="365" y="297" width="272" height="92" rx="10" />
+      <rect x="738" y="174" width="239" height="86" rx="10" />
+      <rect x="738" y="300" width="239" height="89" rx="10" />
+    </g>
+    <rect x="365" y="440" width="272" height="70" rx="10" fill="#172c35" />
+    <g text-anchor="middle" fill="#1d2c38" font-size="21" font-weight="700">
+      <text x="149" y="99">運営画面</text>
+      <text x="149" y="464">会場掲示</text>
+      <text x="501" y="93">API / state</text>
+      <text x="501" y="205">tournament</text>
+      <text x="501" y="332">store</text>
+      <text x="857" y="208">scoring</text>
+      <text x="857" y="335">JSON ファイル</text>
+    </g>
+    <g text-anchor="middle" fill="#546773" font-size="15">
+      <text x="149" y="125">Console / useControl</text>
+      <text x="149" y="490">Display / Board</text>
+      <text x="501" y="119">入力・更新番号・Originの検証</text>
+      <text x="501" y="233">大会操作・保護・操作履歴</text>
+      <text x="501" y="361">保存完了後に変更を通知</text>
+      <text x="857" y="235">各戦・試合・順位を計算</text>
+      <text x="857" y="363">現行状態・直前状態・退避</text>
+    </g>
+    <g fill="#fff" text-anchor="middle">
+      <text x="501" y="470" font-size="19" font-weight="700">SSE / stream</text>
+      <text x="501" y="493" font-size="14">全状態を snapshot として配信</text>
+    </g>
+    <g stroke="#08685f" stroke-width="2.5" fill="none">
+      <path d="M274 107H348" />
+      <path d="M501 142V157" />
+      <path d="M501 263V282" />
+      <path d="M637 217H722" />
+      <path d="M637 344H722" />
+      <path d="M501 389V429" />
+      <path d="M365 475H291" />
+      <path d="M365 466H312V151H285" />
+    </g>
+    <g fill="#08685f">
+      <path d="m343 102 9 5-9 5z" />
+      <path d="m496 153 5 9 5-9z" />
+      <path d="m496 279 5 9 5-9z" />
+      <path d="m717 212 9 5-9 5z" />
+      <path d="m717 339 9 5-9 5z" />
+      <path d="m496 424 5 9 5-9z" />
+      <path d="m296 470-9 5 9 5z" />
+      <path d="m290 146-9 5 9 5z" />
+    </g>
+    <g font-size="12" fill="#08685f">
+      <text x="283" y="89">POST</text>
+      <text x="676" y="197">判定</text>
+      <text x="676" y="325">保存</text>
+    </g>
+  </g>
+</svg>

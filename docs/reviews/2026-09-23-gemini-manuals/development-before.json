@@ -1,0 +1,69 @@
+{
+  "model": "gemini-3.6-flash",
+  "file": "chros/public/manual/development.html",
+  "viewport": {
+    "width": 1440,
+    "height": 900,
+    "device_scale": 2.0,
+    "full_page": true,
+    "color_scheme": "light",
+    "wait_ms": 500,
+    "max_height_px": 20000
+  },
+  "findings": [
+    {
+      "check": "text",
+      "severity": "warning",
+      "category": "敬体・常体の混在",
+      "location": "[88]",
+      "quote": "役割が伝わる名前を使う。",
+      "suggestion": "役割が伝わる名前を使います。",
+      "reason": "他の箇条書き（[65]〜[68]）や本文では敬体（です・ます調）が使用されていますが、[88]〜[92]の箇条書きでは常体（辞書形）になっており文体が統一されていません。"
+    },
+    {
+      "check": "text",
+      "severity": "warning",
+      "category": "敬体・常体の混在",
+      "location": "[105]",
+      "quote": "エラーなしで終了すること。",
+      "suggestion": "エラーなしで終了することを確認します。",
+      "reason": "同一表内の他の説明文（[103]や[107]など）が敬体（です・ます調）で書かれているのに対し、本箇所のみ体言止め・指示文の形式になっており不統一です。"
+    },
+    {
+      "check": "text",
+      "severity": "warning",
+      "category": "句読点・記号の不統一",
+      "location": "[118]",
+      "quote": "保存と画面切替が反映される",
+      "suggestion": "保存と画面切替が反映される。",
+      "reason": "他の箇条書き（[65]〜[68]など）では文末に句点が付与されていますが、[118]〜[122]では文末の句点が省略されており不統一です。 "
+    },
+    {
+      "check": "layout",
+      "severity": "warning",
+      "category": "レイアウト崩れ",
+      "location": "「01 まず手元で起動する」直下の注記テキスト内",
+      "quote": "npm install -g global pnpm@8.12.0",
+      "suggestion": "長い文字列やインラインコードには適切な折り返し処理（`word-break: break-all`など）を適用し、コンテンツ領域内に収まるように調整してください。",
+      "reason": "インラインコードの背景グレー領域が本文テキストエリアの右枠を大きく食い破って右側にはみ出しています。"
+    },
+    {
+      "check": "layout",
+      "severity": "warning",
+      "category": "レイアウト崩れ",
+      "location": "「05 会場向けに起動する」の「2 大会毎の保存先を指定し、LANへ公開して起動する」直下のコードブロック",
+      "quote": "CHROS_DATA_DIR=/absolute/path/to/event-data pnpm --filter chros exec next start --hostname 0.0.0.0 --port 3000",
+      "suggestion": "コードブロックに対して横スクロール（`overflow-x: auto`）を有効にするか、改行を入れて枠内に収まるようにしてください。",
+      "reason": "長いコマンド文字列がコードブロック（黒枠）の右端を突き破ってはみ出しています。"
+    },
+    {
+      "check": "layout",
+      "severity": "warning",
+      "category": "レイアウト崩れ",
+      "location": "「08 この手順書を更新する」の「2 閲覧データの環境で画像を撮り直し、HTMLへ埋め込む」直下のコードブロック",
+      "quote": "node scripts/embed-manual-imgs.cjs public/chroms/public/manual/operations.html 1440",
+      "suggestion": "コードブロックに対して横スクロール（`overflow-x: auto`）を適用し、右端からはみ出さないように修正してください。",
+      "reason": "コードブロック全体およびテキストが親要素の右枠を越えて大きくはみ出しています。"
+    }
+  ]
+}

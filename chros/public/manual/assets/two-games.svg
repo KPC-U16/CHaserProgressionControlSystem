@@ -1,0 +1,51 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="900"
+  height="330"
+  viewBox="0 0 900 330"
+  role="img"
+  aria-labelledby="title desc"
+>
+  <title id="title">1試合は先攻と後攻を交換する2戦</title>
+  <desc id="desc">
+    入力欄の左は若葉、右は高原のまま。第1戦は若葉がCOOL、第2戦は高原がCOOLになります。第2戦の記録後に勝者を判定します。
+  </desc>
+  <rect width="900" height="330" rx="16" fill="white" />
+  <g font-family="sans-serif" text-anchor="middle">
+    <g fill="#f1f5f4" stroke="#d7e1e3">
+      <rect x="20" y="24" width="365" height="206" rx="12" />
+      <rect x="515" y="24" width="365" height="206" rx="12" />
+    </g>
+    <g fill="#1d2c38" font-size="24" font-weight="700">
+      <text x="202" y="64">第1戦</text>
+      <text x="697" y="64">第2戦</text>
+    </g>
+    <g font-size="15" fill="#546773">
+      <text x="202" y="93">じゃんけん後に先攻を登録</text>
+      <text x="697" y="93">先攻・後攻を自動で反転</text>
+    </g>
+    <rect x="48" y="118" width="140" height="33" rx="16" fill="#e0edf8" />
+    <rect x="216" y="118" width="140" height="33" rx="16" fill="#f8e9df" />
+    <rect x="542" y="118" width="140" height="33" rx="16" fill="#f8e9df" />
+    <rect x="710" y="118" width="140" height="33" rx="16" fill="#e0edf8" />
+    <g font-size="14" font-weight="700">
+      <text x="118" y="140" fill="#265d83">COOL · 先攻</text>
+      <text x="286" y="140" fill="#865026">HOT · 後攻</text>
+      <text x="612" y="140" fill="#865026">HOT · 後攻</text>
+      <text x="780" y="140" fill="#265d83">COOL · 先攻</text>
+    </g>
+    <g font-size="20" fill="#1d2c38">
+      <text x="118" y="187">若葉 ひなた</text>
+      <text x="286" y="187">高原 ゆう</text>
+      <text x="612" y="187">若葉 ひなた</text>
+      <text x="780" y="187">高原 ゆう</text>
+    </g>
+    <path d="M405 125H485" stroke="#08685f" stroke-width="3" />
+    <path d="m478 118 12 7-12 7z" fill="#08685f" />
+    <text x="450" y="159" font-size="14" fill="#08685f">第1戦を記録</text>
+    <rect x="110" y="260" width="680" height="48" rx="10" fill="#e4f2ee" />
+    <text x="450" y="290" font-size="18" fill="#08685f">
+      入力欄の人物は動きません。名前と COOL / HOT を毎戦確認。
+    </text>
+  </g>
+</svg>
