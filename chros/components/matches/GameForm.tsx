@@ -5,6 +5,8 @@ import type { SendCommand } from '@/lib/control-types';
 import { evaluateGame, playerName } from '@chros/scoring';
 import { reasonLabels, reasons, type ControlState, type Game, type Match } from '@chros/shared';
 import { useState } from 'react';
+import ChoiceGroup from '../ChoiceGroup';
+import ReasonIcon from './ReasonIcon';
 
 export default function GameForm({
   state,
@@ -42,6 +44,8 @@ export default function GameForm({
   const updateGame = (patch: Partial<Game>) => setGame((current) => ({ ...current, ...patch }));
   const needsRemainingTurns =
     state.profile === 'asahikawa' && !['points', 'put', 'surround'].includes(game.reason);
+  const decidedByScore = game.reason === 'points';
+  const sideBadge = (side: 'a' | 'b') => (match[side] === cool ? 'COOL · 先攻' : 'HOT · 後攻');
 
   let resultLabel = '勝者を選択してください';
   if (!scoreInputs.a || !scoreInputs.b) {
@@ -66,9 +70,7 @@ export default function GameForm({
       <div className="score-inputs">
         {(['a', 'b'] as const).map((side) => (
           <label key={side} className={`score-input score-input-${side}`}>
-            <span className="side-badge">
-              {match[side] === cool ? 'COOL · 先攻' : 'HOT · 後攻'}
-            </span>
+            <span className="side-badge">{sideBadge(side)}</span>
             <strong>{playerName(state, match[side])}</strong>
             <div>
               <input
@@ -89,42 +91,43 @@ export default function GameForm({
           </label>
         ))}
       </div>
-      <div className="form-grid">
-        <label>
-          勝因
-          <select
-            value={game.reason}
-            onChange={(event) =>
-              updateGame({
-                reason: event.target.value as Game['reason'],
-                specialWinner: event.target.value === 'points' ? null : game.specialWinner,
-              })
-            }
-          >
-            {reasons.map((reason) => (
-              <option value={reason} key={reason}>
-                {reasonLabels[reason]}
-              </option>
-            ))}
-          </select>
-        </label>
-        {game.reason !== 'points' && (
-          <label>
-            勝利した参加者
-            <select
-              required
-              value={game.specialWinner ?? ''}
-              onChange={(event) => updateGame({ specialWinner: event.target.value as 'a' | 'b' })}
-            >
-              <option value="" disabled>
-                勝者を選択
-              </option>
-              <option value="a">{playerName(state, match.a)}</option>
-              <option value="b">{playerName(state, match.b)}</option>
-            </select>
-          </label>
-        )}
-        {needsRemainingTurns && (
+      <ChoiceGroup
+        legend="勝因"
+        name={`reason-${match.id}-${number}`}
+        choices={reasons.map((reason) => ({
+          value: reason,
+          label: reasonLabels[reason],
+          icon: <ReasonIcon reason={reason} />,
+        }))}
+        selected={game.reason}
+        onSelect={(reason) =>
+          updateGame({ reason, specialWinner: reason === 'points' ? null : game.specialWinner })
+        }
+      />
+      <ChoiceGroup
+        legend={
+          <>
+            勝利した参加者{' '}
+            {decidedByScore ? (
+              <small>得点比較のため、得点から自動で判定します</small>
+            ) : (
+              <span className="required">必須</span>
+            )}
+          </>
+        }
+        name={`special-winner-${match.id}-${number}`}
+        required={!decidedByScore}
+        disabled={decidedByScore}
+        choices={(['a', 'b'] as const).map((side) => ({
+          value: side,
+          label: playerName(state, match[side]),
+          note: <span className={`side-badge side-badge-${side}`}>{sideBadge(side)}</span>,
+        }))}
+        selected={game.specialWinner}
+        onSelect={(specialWinner) => updateGame({ specialWinner })}
+      />
+      {needsRemainingTurns && (
+        <div className="form-grid">
           <label>
             終了時の残りターン
             <input
@@ -139,8 +142,8 @@ export default function GameForm({
               }}
             />
           </label>
-        )}
-      </div>
+        </div>
+      )}
       <div className="calculation-preview">
         <span>この戦の判定</span>
         <strong>{resultLabel}</strong>
