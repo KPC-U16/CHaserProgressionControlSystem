@@ -164,6 +164,107 @@ small {
 .full-width {
   width: 100%;
 }
+.choice-group > legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 9px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.choice-clear {
+  margin-left: auto;
+  padding: 2px 4px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.choice-group > legend small {
+  margin-left: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
+}
+.choice-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 8px;
+}
+.choice-sections {
+  display: grid;
+  gap: 8px;
+}
+.choice-sections > .choice-options:not(:only-child) {
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-template-columns: none;
+}
+.choice {
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 43px;
+  padding: 8px 12px;
+  border: 1px solid #d8e0d8;
+  border-radius: 7px;
+  background: white;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.choice:hover {
+  background: #f0f5ec;
+}
+.choice.selected {
+  border-color: #8cab5d;
+  background: #edf5df;
+  box-shadow: 0 0 0 1px #8cab5d;
+}
+.choice strong {
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.choice small {
+  font-size: 9px;
+}
+.choice-icon {
+  width: 25px;
+  height: 25px;
+  color: #6c8a5f;
+}
+.choice.selected .choice-icon {
+  color: #5a7a36;
+}
+.choice-group:disabled .choice,
+.choice-group:disabled .choice:hover {
+  background: white;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.choice input,
+.scene-button input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  opacity: 0;
+  appearance: none;
+  cursor: pointer;
+}
+.choice:has(input:focus-visible),
+.scene-button:has(input:focus-visible) {
+  outline: 3px solid #64b7ad;
+  outline-offset: 3px;
+}
 .text-button {
   font-size: 11px;
   color: var(--green);
@@ -527,6 +628,9 @@ small {
   font-size: 9px;
 }
 .scene-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   padding: 17px 20px 20px;
   border-top: 1px solid var(--line);
 }
@@ -534,24 +638,14 @@ small {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  gap: 10px;
 }
 .scene-toolbar > b {
   font-size: 11px;
 }
-.scene-toolbar label {
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
+.scene-toolbar > small {
   color: var(--muted);
   font-size: 10px;
-  font-weight: 400;
-}
-.scene-toolbar select {
-  min-height: 30px;
-  padding: 4px 7px;
-  font-size: 10px;
-  width: 105px;
 }
 .scene-grid {
   display: grid;
@@ -560,6 +654,7 @@ small {
 }
 .scene-button {
   position: relative;
+  cursor: pointer;
   border: 1px solid #e0e7db;
   background: #fcfdfb;
   border-radius: 6px;
@@ -831,6 +926,9 @@ small {
   flex-direction: column;
   gap: 17px;
 }
+.game-form .notice {
+  margin-bottom: 0;
+}
 .game-form-top {
   display: flex;
   justify-content: space-between;
@@ -849,23 +947,31 @@ small {
   gap: 15px;
 }
 .score-input {
-  background: #f2f7f2;
-  border: 1px solid #dfe9dc;
+  border: 1px solid var(--line);
   border-radius: 7px;
   padding: 14px;
   gap: 9px;
 }
-.score-input-b {
-  background: #fcf4ee;
-  border-color: #eee2d9;
+.score-input-cool {
+  background: #eef4fb;
+  border-color: #d2e0f0;
+}
+.score-input-hot {
+  background: #fdf2ef;
+  border-color: #f0d7d0;
 }
 .side-badge {
-  color: #518a81;
+  color: var(--muted);
   font-size: 8px;
   letter-spacing: 1px;
 }
-.score-input-b .side-badge {
-  color: #b58268;
+.score-input-cool .side-badge,
+.side-badge-cool {
+  color: #2f6099;
+}
+.score-input-hot .side-badge,
+.side-badge-hot {
+  color: #b0453a;
 }
 .score-input strong {
   font-size: 13px;
@@ -931,17 +1037,17 @@ small {
 .replay-area {
   border-top: 1px solid var(--line);
   margin-top: 22px;
-  padding-top: 10px;
-}
-.replay-area > .text-button {
-  font-size: 10px;
-  color: #929d88;
+  padding-top: 16px;
 }
 .replay-area form {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: 12px;
   padding-top: 10px;
+}
+.replay-area form > .button {
+  align-self: flex-end;
 }
 .replay-area p {
   color: #947457;
@@ -2148,6 +2254,12 @@ small {
   }
   .game-tabs {
     gap: 13px;
+  }
+  .choice-sections > .choice-options:not(:only-child) .choice {
+    padding: 8px 6px;
+  }
+  .choice-sections > .choice-options:not(:only-child) .choice strong {
+    font-size: 11px;
   }
   .score-input {
     padding: 12px;

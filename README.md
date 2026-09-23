@@ -20,6 +20,24 @@ packages/scoring/  スコア計算の純粋ロジック（I/O を持たない）
 ## 環境構築
 
 Node.js 22以降とpnpmで起動できます。今回の試作はファイル保存のためDBを必要としません。
+### Nix
+
+[Nix](https://nixos.org/download/) と flakes が有効なら、`nix develop` で
+Node 22 / pnpm 9.12.0 / PostgreSQL クライアント 17 / OpenSSL が揃ったシェルに入れます。
+ツールを用意するだけなので、以降の手順は下の「Docker」「素の pnpm」と同じです。
+
+pnpm は `package.json` の `packageManager` と同じバージョンを固定しています。
+更新する場合は [nix/pnpm.nix](./nix/pnpm.nix) 冒頭の手順を参照してください。
+
+[direnv](https://direnv.net) を入れている場合は `direnv allow` でディレクトリに入るだけで
+シェルが有効になります（`.envrc` 同梱）。
+
+### Docker
+
+リポジトリのルートで `docker compose up -d` を実行してください。
+`app` (Next.js, :3000) と `db` (PostgreSQL 17, :5432) が立ち上がります。
+
+### 素の pnpm
 
 ```sh
 pnpm install
@@ -41,4 +59,4 @@ Dockerでは `docker compose up -d --build` でアプリと永続化用volumeを
 
 Viewer は `GET /api/stream` の SSE を購読します。接続直後に全状態のスナップショットが
 1件届き、以降も保存のたびに最新の全状態が流れます。WebSocketは使用しません。
-これは掲示状態の即時反映であり、試合の得点入力は各戦終了後に行います。
+これは掲示状態の即時反映であり、試合のスコア入力は各戦終了後に行います。

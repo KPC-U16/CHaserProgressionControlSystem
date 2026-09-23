@@ -73,7 +73,7 @@ export function Matches({ state, send }: ControlProps) {
                       </span>
                       <small>
                         {match.games.length
-                          ? `${match.games.length}/2戦記録 · 得点 ${result.a.points}–${result.b.points} · 特殊P ${result.a.special}–${result.b.special}`
+                          ? `${match.games.length}/2戦記録 · スコア ${result.a.points}–${result.b.points} · 特殊P ${result.a.special}–${result.b.special}`
                           : match.bye
                             ? '次の試合へ進出'
                             : '先攻・後攻は未登録'}

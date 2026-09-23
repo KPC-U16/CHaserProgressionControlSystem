@@ -44,7 +44,7 @@ describe('対人戦の判定', () => {
     expect(result.b.points).toBe(30);
   });
   it.each(['put', 'surround', 'disconnect', 'illegal-move', 'self-surround'] as const)(
-    '%s は同じ1特殊Pとして扱い、得点より優先する',
+    '%s は同じ1特殊Pとして扱い、スコアより優先する',
     (reason) => {
       const result = evaluateMatch(matchWith(special(reason), points(1, 100, 2)), 'kushiro');
       expect(result.a.special).toBe(1);
@@ -53,7 +53,7 @@ describe('対人戦の判定', () => {
       expect(result.b.raw).toBe(190);
     },
   );
-  it('双方1特殊Pなら得点で決め、完全同値なら再試合にする', () => {
+  it('双方1特殊Pならスコアで決め、完全同値なら再試合にする', () => {
     const match = matchWith(special('put'), special('disconnect', 'b', 2));
     expect(evaluateMatch(match, 'kushiro').winnerId).toBe('b');
     match.games[1]!.scoreA = 90;
@@ -64,14 +64,14 @@ describe('対人戦の判定', () => {
       status: 'replay',
     });
   });
-  it('得点による同点戦に特殊Pやゲーム勝数を付けない', () => {
+  it('スコアによる同点戦に特殊Pやゲーム勝数を付けない', () => {
     expect(evaluateGame(points(15, 15), 'kushiro')).toMatchObject({
       winner: null,
       a: { special: 0, wins: 0 },
       b: { special: 0, wins: 0 },
     });
   });
-  it('旭川ではゲーム勝数、次に換算得点で決める', () => {
+  it('旭川ではゲーム勝数、次に換算スコアで決める', () => {
     const match = matchWith(special('put'), { ...points(1, 0, 2) });
     expect(evaluateMatch(match, 'asahikawa')).toMatchObject({
       winnerId: 'a',
@@ -91,7 +91,7 @@ describe('対人戦の判定', () => {
       expect(evaluateGame(special(reason), 'asahikawa').b).toMatchObject({ raw: 90, points: -37 });
     },
   );
-  it('参加者を左右反転しても勝者と得点の意味が変わらない', () => {
+  it('参加者を左右反転しても勝者とスコアの意味が変わらない', () => {
     for (let i = 0; i < 30; i++) {
       const original = matchWith(points(i, 30 - i), {
         ...special(i % 2 ? 'put' : 'disconnect', i % 3 ? 'a' : 'b', 2),
@@ -198,7 +198,7 @@ describe('大会進行と入力保護', () => {
       }),
     ).toThrow('第1戦');
   });
-  it('特殊勝因の勝者未選択・得点戦の特殊勝者指定を拒否する', () => {
+  it('特殊勝因の勝者未選択・スコア戦の特殊勝者指定を拒否する', () => {
     let state = tournament();
     const id = state.matches[0]!.id;
     state = applyCommand(state, { type: 'start-match', matchId: id, firstCool: 'p0' });

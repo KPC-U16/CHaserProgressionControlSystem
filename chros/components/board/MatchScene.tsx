@@ -55,7 +55,7 @@ export function MatchScene({ state, match }: { state: ControlState; match: Match
               <div className="competitor-score">
                 <strong>{match.games.length ? result[side].points : '–'}</strong>
                 <div>
-                  <span>{state.profile === 'asahikawa' ? '換算得点' : '合計得点'}</span>
+                  <span>{state.profile === 'asahikawa' ? '換算スコア' : '合計スコア'}</span>
                   <b>
                     {state.profile === 'kushiro'
                       ? `特殊P ${result[side].special}`

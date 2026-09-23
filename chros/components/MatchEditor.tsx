@@ -45,7 +45,7 @@ export default function MatchEditor({
             <small>MATCH WINNER</small>
             <strong>{playerName(state, result.winnerId)}</strong>
             <span>
-              {result.decidedBy}で勝利 · 特殊P {result.a.special}–{result.b.special} / 合計得点{' '}
+              {result.decidedBy}で勝利 · 特殊P {result.a.special}–{result.b.special} / 合計スコア{' '}
               {result.a.points}–{result.b.points}
             </span>
           </div>

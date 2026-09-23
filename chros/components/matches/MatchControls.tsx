@@ -5,6 +5,7 @@ import type { SendCommand } from '@/lib/control-types';
 import { playerName } from '@chros/scoring';
 import { type ControlState, type Match } from '@chros/shared';
 import { useState } from 'react';
+import ChoiceGroup from '../ChoiceGroup';
 import GameForm from './GameForm';
 export function MatchControls({
   state,
@@ -46,16 +47,21 @@ export function MatchControls({
     return (
       <form className="start-form" onSubmit={startMatch}>
         <p>じゃんけんの結果に従って、第1戦の先攻を登録します。第2戦は自動で入れ替わります。</p>
-        <label>
-          第1戦の COOL・先攻
-          <select required value={firstCool} onChange={(event) => setFirstCool(event.target.value)}>
-            <option value="" disabled>
-              参加者を選択
-            </option>
-            <option value={match.a}>{playerName(state, match.a)}</option>
-            <option value={match.b}>{playerName(state, match.b)}</option>
-          </select>
-        </label>
+        <ChoiceGroup
+          legend={
+            <>
+              第1戦の COOL・先攻 <span className="required">必須</span>
+            </>
+          }
+          name={`first-cool-${match.id}`}
+          required
+          choices={[match.a, match.b].map((playerId) => ({
+            value: playerId,
+            label: playerName(state, playerId),
+          }))}
+          selected={firstCool || null}
+          onSelect={setFirstCool}
+        />
         <button className="button primary" disabled={locked} type="submit">
           試合を開始する →
         </button>
@@ -96,7 +102,12 @@ export function MatchControls({
       )}
       {!locked && (
         <div className="replay-area">
-          <button className="text-button" type="button" onClick={() => setReplayOpen(!replayOpen)}>
+          <button
+            className="button subtle"
+            type="button"
+            aria-expanded={replayOpen}
+            onClick={() => setReplayOpen(!replayOpen)}
+          >
             両戦を仕切り直す
           </button>
           {replayOpen && (

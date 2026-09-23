@@ -32,7 +32,7 @@ export default function ControlDesk({
             <h3>記録して、伝える。</h3>
             <p>第1戦を保存したら、先攻・後攻を交代。第2戦の保存で試合結果と順位が確定します。</p>
             <div className="note-steps">
-              <span>01 得点・勝因</span>
+              <span>01 スコア・勝因</span>
               <i>→</i>
               <span>02 自動集計</span>
               <i>→</i>

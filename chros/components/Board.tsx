@@ -50,7 +50,7 @@ export default function Board({ state }: { state: ControlState }) {
             ? 'SAMPLE TOURNAMENT · 架空の参加者によるデモ'
             : 'CHASER PROGRESSION CONTROL SYSTEM'}
         </span>
-        <span>得点は各戦の終了後に更新</span>
+        <span>スコアは各戦の終了後に更新</span>
         <b>CHroS / {String(state.revision).padStart(3, '0')}</b>
       </div>
     </div>

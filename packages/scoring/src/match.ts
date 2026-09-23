@@ -50,7 +50,7 @@ function matchStatus(complete: boolean, winnerId: string | null, started: boolea
 
 function decidingCriterion(match: Match, profile: Profile, primaryDifference: number) {
   if (match.bye) return '不戦進出';
-  if (!primaryDifference) return '合計得点';
+  if (!primaryDifference) return '合計スコア';
   return profile === 'kushiro' ? '特殊ポイント' : 'ゲーム勝数';
 }
 
