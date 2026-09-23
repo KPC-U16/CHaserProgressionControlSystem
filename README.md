@@ -20,6 +20,24 @@ packages/scoring/  スコア計算の純粋ロジック（I/O を持たない）
 ## 環境構築
 
 Node.js 22以降とpnpmで起動できます。今回の試作はファイル保存のためDBを必要としません。
+### Nix
+
+[Nix](https://nixos.org/download/) と flakes が有効なら、`nix develop` で
+Node 22 / pnpm 9.12.0 / PostgreSQL クライアント 17 / OpenSSL が揃ったシェルに入れます。
+ツールを用意するだけなので、以降の手順は下の「Docker」「素の pnpm」と同じです。
+
+pnpm は `package.json` の `packageManager` と同じバージョンを固定しています。
+更新する場合は [nix/pnpm.nix](./nix/pnpm.nix) 冒頭の手順を参照してください。
+
+[direnv](https://direnv.net) を入れている場合は `direnv allow` でディレクトリに入るだけで
+シェルが有効になります（`.envrc` 同梱）。
+
+### Docker
+
+リポジトリのルートで `docker compose up -d` を実行してください。
+`app` (Next.js, :3000) と `db` (PostgreSQL 17, :5432) が立ち上がります。
+
+### 素の pnpm
 
 ```sh
 pnpm install
