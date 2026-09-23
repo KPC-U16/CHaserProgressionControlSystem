@@ -926,6 +926,9 @@ small {
   flex-direction: column;
   gap: 17px;
 }
+.game-form .notice {
+  margin-bottom: 0;
+}
 .game-form-top {
   display: flex;
   justify-content: space-between;
@@ -944,24 +947,31 @@ small {
   gap: 15px;
 }
 .score-input {
-  background: #f2f7f2;
-  border: 1px solid #dfe9dc;
+  border: 1px solid var(--line);
   border-radius: 7px;
   padding: 14px;
   gap: 9px;
 }
-.score-input-b {
-  background: #fcf4ee;
-  border-color: #eee2d9;
+.score-input-cool {
+  background: #eef4fb;
+  border-color: #d2e0f0;
+}
+.score-input-hot {
+  background: #fdf2ef;
+  border-color: #f0d7d0;
 }
 .side-badge {
-  color: #518a81;
+  color: var(--muted);
   font-size: 8px;
   letter-spacing: 1px;
 }
-.score-input-b .side-badge,
-.side-badge-b {
-  color: #b58268;
+.score-input-cool .side-badge,
+.side-badge-cool {
+  color: #2f6099;
+}
+.score-input-hot .side-badge,
+.side-badge-hot {
+  color: #b0453a;
 }
 .score-input strong {
   font-size: 13px;

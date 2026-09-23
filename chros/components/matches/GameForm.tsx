@@ -3,7 +3,13 @@ import type { FormEvent } from 'react';
 
 import type { SendCommand } from '@/lib/control-types';
 import { evaluateGame, playerName } from '@chros/scoring';
-import { reasonLabels, reasons, type ControlState, type Game, type Match } from '@chros/shared';
+import {
+  reasonGroups,
+  reasonLabels,
+  type ControlState,
+  type Game,
+  type Match,
+} from '@chros/shared';
 import { useState } from 'react';
 import ChoiceGroup from '../ChoiceGroup';
 import ReasonIcon from './ReasonIcon';
@@ -45,7 +51,14 @@ export default function GameForm({
   const needsRemainingTurns =
     state.profile === 'asahikawa' && !['points', 'put', 'surround'].includes(game.reason);
   const decidedByScore = game.reason === 'points';
+  const winnerMismatch =
+    decidedByScore &&
+    Boolean(scoreInputs.a && scoreInputs.b) &&
+    game.specialWinner !== null &&
+    result.winner !== game.specialWinner;
+  const sideTone = (side: 'a' | 'b') => (match[side] === cool ? 'cool' : 'hot');
   const sideBadge = (side: 'a' | 'b') => (match[side] === cool ? 'COOL · 先攻' : 'HOT · 後攻');
+  const sides = match.b === cool ? (['b', 'a'] as const) : (['a', 'b'] as const);
 
   let resultLabel = '勝者を選択してください';
   if (!scoreInputs.a || !scoreInputs.b) {
@@ -58,7 +71,8 @@ export default function GameForm({
 
   async function saveResult(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (await send({ type: 'save-game', matchId: match.id, game, correction })) onSaved();
+    const recorded = { ...game, specialWinner: decidedByScore ? null : game.specialWinner };
+    if (await send({ type: 'save-game', matchId: match.id, game: recorded, correction })) onSaved();
   }
 
   return (
@@ -68,8 +82,8 @@ export default function GameForm({
         <span>{number === 2 ? '先攻・後攻を入れ替え' : 'じゃんけんで決めた先攻・後攻'}</span>
       </div>
       <div className="score-inputs">
-        {(['a', 'b'] as const).map((side) => (
-          <label key={side} className={`score-input score-input-${side}`}>
+        {sides.map((side) => (
+          <label key={side} className={`score-input score-input-${sideTone(side)}`}>
             <span className="side-badge">{sideBadge(side)}</span>
             <strong>{playerName(state, match[side])}</strong>
             <div>
@@ -92,24 +106,11 @@ export default function GameForm({
         ))}
       </div>
       <ChoiceGroup
-        legend="勝因"
-        name={`reason-${match.id}-${number}`}
-        choices={reasons.map((reason) => ({
-          value: reason,
-          label: reasonLabels[reason],
-          icon: <ReasonIcon reason={reason} />,
-        }))}
-        selected={game.reason}
-        onSelect={(reason) =>
-          updateGame({ reason, specialWinner: reason === 'points' ? null : game.specialWinner })
-        }
-      />
-      <ChoiceGroup
         legend={
           <>
             勝利した参加者{' '}
             {decidedByScore ? (
-              <small>スコア比較のため、スコアから自動で判定します</small>
+              <small>スコアから自動で判定します・選択はスコアとの照合に使います</small>
             ) : (
               <span className="required">必須</span>
             )}
@@ -117,14 +118,36 @@ export default function GameForm({
         }
         name={`special-winner-${match.id}-${number}`}
         required={!decidedByScore}
-        disabled={decidedByScore}
-        choices={(['a', 'b'] as const).map((side) => ({
+        choices={sides.map((side) => ({
           value: side,
           label: playerName(state, match[side]),
-          note: <span className={`side-badge side-badge-${side}`}>{sideBadge(side)}</span>,
+          note: (
+            <span className={`side-badge side-badge-${sideTone(side)}`}>{sideBadge(side)}</span>
+          ),
         }))}
         selected={game.specialWinner}
         onSelect={(specialWinner) => updateGame({ specialWinner })}
+        onClear={() => updateGame({ specialWinner: null })}
+      />
+      {winnerMismatch && (
+        <div className="notice warning">
+          {result.winner
+            ? `スコアでは ${playerName(state, match[result.winner])} の勝ちです。選択した勝者と一致していません。`
+            : 'スコアが同点のため勝者はいません。スコアと勝者の選択を見直してください。'}
+        </div>
+      )}
+      <ChoiceGroup
+        legend="勝因"
+        name={`reason-${match.id}-${number}`}
+        sections={reasonGroups.map((group) =>
+          group.map((reason) => ({
+            value: reason,
+            label: reasonLabels[reason],
+            icon: <ReasonIcon reason={reason} />,
+          })),
+        )}
+        selected={game.reason}
+        onSelect={(reason) => updateGame({ reason })}
       />
       {needsRemainingTurns && (
         <div className="form-grid">
