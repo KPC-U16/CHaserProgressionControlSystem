@@ -7,15 +7,13 @@ services:
     ports:
       - "3000:3000"
     environment:
-      #NOTE: 本番環境の時は、以下の変数を変えること。
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://user:password@db:5432/database
-      - NEXT_PUBLIC_APP_URL=http://localhost:3000
-    depends_on:
-      db:
-        condition: service_healthy
+      - NODE_ENV=production
+      - CHROS_DATA_DIR=/data/chros
+    volumes:
+      - chros-data:/data/chros
 
   db:
+    profiles: [database]
     image: postgres:17
     environment:
       - POSTGRES_USER=user
@@ -32,4 +30,5 @@ services:
       retries: 10
 
 volumes:
+  chros-data:
   db-data:
