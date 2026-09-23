@@ -609,6 +609,9 @@ small {
   font-size: 9px;
 }
 .scene-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   padding: 17px 20px 20px;
   border-top: 1px solid var(--line);
 }
@@ -616,24 +619,14 @@ small {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  gap: 10px;
 }
 .scene-toolbar > b {
   font-size: 11px;
 }
-.scene-toolbar label {
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
+.scene-toolbar > small {
   color: var(--muted);
   font-size: 10px;
-  font-weight: 400;
-}
-.scene-toolbar select {
-  min-height: 30px;
-  padding: 4px 7px;
-  font-size: 10px;
-  width: 105px;
 }
 .scene-grid {
   display: grid;
@@ -642,6 +635,7 @@ small {
 }
 .scene-button {
   position: relative;
+  cursor: pointer;
   border: 1px solid #e0e7db;
   background: #fcfdfb;
   border-radius: 6px;
