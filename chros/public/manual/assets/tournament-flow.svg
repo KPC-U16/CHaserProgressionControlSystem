@@ -1,0 +1,57 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1100"
+  height="220"
+  viewBox="0 0 1100 220"
+  role="img"
+  aria-labelledby="title desc"
+>
+  <title id="title">大会の進行と担当する操作</title>
+  <desc id="desc">準備、開会、予選、本戦、閉会の順。予選から本戦へは進出者の確認が必要です。</desc>
+  <rect width="1100" height="220" rx="16" fill="#fff" />
+  <g font-family="sans-serif">
+    <path d="M206 94H244M422 94H460M638 94H676M854 94H892" stroke="#9bb5ad" stroke-width="3" />
+    <g fill="#9bb5ad">
+      <path d="m236 88 9 6-9 6z" />
+      <path d="m452 88 9 6-9 6z" />
+      <path d="m668 88 9 6-9 6z" />
+      <path d="m884 88 9 6-9 6z" />
+    </g>
+    <g fill="#eef5f2" stroke="#c9dcd5">
+      <rect x="22" y="28" width="184" height="137" rx="12" />
+      <rect x="238" y="28" width="184" height="137" rx="12" />
+      <rect x="454" y="28" width="184" height="137" rx="12" />
+      <rect x="670" y="28" width="184" height="137" rx="12" />
+      <rect x="886" y="28" width="192" height="137" rx="12" />
+    </g>
+    <g text-anchor="middle" fill="#08685f" font-size="13" font-weight="700">
+      <text x="114" y="57">01 PREPARE</text>
+      <text x="330" y="57">02 OPENING</text>
+      <text x="546" y="57">03 QUALIFYING</text>
+      <text x="762" y="57">04 FINALS</text>
+      <text x="982" y="57">05 CLOSING</text>
+    </g>
+    <g text-anchor="middle" fill="#1d2c38" font-size="24" font-weight="700">
+      <text x="114" y="92">準備</text>
+      <text x="330" y="92">開会</text>
+      <text x="546" y="92">予選</text>
+      <text x="762" y="92">本戦</text>
+      <text x="982" y="92">閉会</text>
+    </g>
+    <g text-anchor="middle" fill="#546773" font-size="16">
+      <text x="114" y="126">設定・参加者</text>
+      <text x="114" y="149">組み合わせ作成</text>
+      <text x="330" y="126">進行案内を掲示</text>
+      <text x="330" y="149">接続と表示を確認</text>
+      <text x="546" y="126">総当たり・2戦記録</text>
+      <text x="546" y="149">順位と進出者を確認</text>
+      <text x="762" y="126">組み合わせを確定</text>
+      <text x="762" y="149">決勝まで勝ち上がり</text>
+      <text x="982" y="126">閉会式を掲示</text>
+      <text x="982" y="149">CSV・JSONを保存</text>
+    </g>
+    <text x="550" y="202" text-anchor="middle" font-size="15" fill="#546773">
+      進行区分と会場の画面は、運営が手動で切り替えます。
+    </text>
+  </g>
+</svg>
