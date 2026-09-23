@@ -30,12 +30,17 @@ export const reasons = [
 export type Reason = (typeof reasons)[number];
 export const reasonLabels: Record<Reason, string> = {
   points: 'スコア比較',
-  put: 'PUT',
-  surround: '相手を包囲',
+  put: '相手を埋めた',
+  surround: '相手を囲んだ',
   disconnect: '相手の通信切断',
-  'illegal-move': '相手の壁埋まり',
-  'self-surround': '相手の自己包囲',
+  'illegal-move': '相手が自ら壁に埋まった',
+  'self-surround': '相手が自ら周りを囲んだ',
 };
+export const reasonGroups = [
+  ['points'],
+  ['put', 'surround'],
+  ['disconnect', 'illegal-move', 'self-surround'],
+] as const satisfies readonly (readonly Reason[])[];
 const id = z.string().min(1).max(100);
 const label = z.string().trim().min(1).max(60);
 export const playerSchema = z.object({
