@@ -804,6 +804,10 @@ small {
   background: #fff0d7;
   color: #a67835;
 }
+.status-void {
+  background: #f3e3e1;
+  color: #a2564b;
+}
 .game-tabs {
   display: flex;
   border-bottom: 1px solid var(--line);

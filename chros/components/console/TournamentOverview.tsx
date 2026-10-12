@@ -1,14 +1,12 @@
 'use client';
 
-import { evaluateMatch } from '@chros/scoring';
+import { matchResult } from '@chros/scoring';
 import { phaseLabels, type ControlState } from '@chros/shared';
 
 export function TournamentOverview({ state }: { state: ControlState }) {
   const match = state.matches.find((candidate) => candidate.id === state.currentMatchId);
   const qualifying = state.matches.filter((candidate) => candidate.stage === 'qualifying');
-  const finished = qualifying.filter(
-    (candidate) => evaluateMatch(candidate, state.profile).winnerId,
-  ).length;
+  const finished = qualifying.filter((candidate) => matchResult(state, candidate).settled).length;
   const progressPercent = qualifying.length ? (finished / qualifying.length) * 100 : 0;
   return (
     <div className="overview-strip">

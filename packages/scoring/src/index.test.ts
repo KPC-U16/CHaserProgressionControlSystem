@@ -6,7 +6,7 @@ import {
   type Game,
   type Match,
 } from '@chros/shared';
-import { evaluateGame, evaluateMatch, standings } from './index';
+import { evaluateGame, evaluateMatch, matchResult, standings } from './index';
 import {
   applyCommand,
   createInitialState,
@@ -385,5 +385,122 @@ describe('大会進行と入力保護', () => {
     expect(reset.tournamentId).not.toBe(shown.tournamentId);
     expect(reset.players).toHaveLength(0);
     expect(reset.revision).toBe(3);
+  });
+});
+
+describe('参加者の棄権', () => {
+  const involves = (match: Match, playerId: string) => [match.a, match.b].includes(playerId);
+
+  it('予選中の棄権は記録済みを含む対戦をすべて無効にし、順位表から外す', () => {
+    let state = tournament(1, 4);
+    state = completeMatch(state, state.matches[0]!.id);
+    state = applyCommand(state, { type: 'withdraw-player', playerId: 'p0', reason: '体調不良' });
+
+    const voided = state.matches.filter((match) => involves(match, 'p0'));
+    expect(voided).toHaveLength(3);
+    for (const match of voided)
+      expect(matchResult(state, match)).toMatchObject({
+        status: 'void',
+        winnerId: null,
+        settled: true,
+      });
+    expect(standings(state).map((row) => row.player.id)).not.toContain('p0');
+    expect(standings(state).every((row) => row.played === 0)).toBe(true);
+    expect(state.audit.at(-1)!.detail).toContain('予選 3試合を無効');
+  });
+  it('無効試合は記録できず、残りの試合だけで本戦を作成できる', () => {
+    let state = tournament(1, 4);
+    state = applyCommand(state, { type: 'withdraw-player', playerId: 'p0', reason: '欠席' });
+    const voided = state.matches.find((match) => involves(match, 'p0'))!;
+    expect(() =>
+      applyCommand(state, { type: 'start-match', matchId: voided.id, firstCool: 'p0' }),
+    ).toThrow('棄権者');
+
+    for (const match of state.matches.filter((match) => !involves(match, 'p0')))
+      state = completeMatch(state, match.id);
+    expect(suggestedQualifiers(state)).toEqual(['p1', 'p2']);
+    const finals = applyCommand(state, {
+      type: 'generate-finals',
+      qualifiers: ['p1', 'p2'],
+      justification: '',
+    });
+    expect(finals.matches.filter((match) => match.stage === 'finals')).toHaveLength(1);
+  });
+  it('棄権を取り消すと記録済みの結果が戻り、本戦確定後は予選の棄権を取り消せない', () => {
+    let state = tournament(1, 3);
+    state = completeMatch(state, state.matches[0]!.id);
+    state = applyCommand(state, { type: 'withdraw-player', playerId: 'p0', reason: '欠席' });
+    state = applyCommand(state, { type: 'reinstate-player', playerId: 'p0' });
+    expect(standings(state).find((row) => row.player.id === 'p0')!.wins).toBe(1);
+
+    state = applyCommand(state, { type: 'withdraw-player', playerId: 'p2', reason: '欠席' });
+    state = applyCommand(state, {
+      type: 'generate-finals',
+      qualifiers: ['p0', 'p1'],
+      justification: '',
+    });
+    expect(() => applyCommand(state, { type: 'reinstate-player', playerId: 'p2' })).toThrow(
+      '本戦確定後',
+    );
+  });
+  it('本戦中の棄権は未決着の試合を相手の不戦勝にし、予選結果と決着済みの試合は保つ', () => {
+    let state = withFinals();
+    const semi = state.matches.filter((match) => match.stage === 'finals' && match.round === 1);
+    const final = () => state.matches.find((match) => match.round === 2)!;
+    const qualifyingBefore = JSON.stringify(standings(state));
+
+    state = completeMatch(state, semi[0]!.id);
+    state = applyCommand(state, {
+      type: 'withdraw-player',
+      playerId: semi[0]!.a!,
+      reason: '帰宅',
+    });
+    expect(JSON.stringify(standings(state))).toBe(qualifyingBefore);
+    const decidedSemi = state.matches.find((match) => match.id === semi[0]!.id)!;
+    expect(matchResult(state, decidedSemi).winnerId).toBe(semi[0]!.a);
+    expect(matchResult(state, final())).toMatchObject({ winnerId: null, settled: false });
+
+    state = completeMatch(state, semi[1]!.id);
+    expect(matchResult(state, final())).toMatchObject({
+      winnerId: semi[1]!.a,
+      forfeited: true,
+      decidedBy: '棄権による不戦勝',
+    });
+  });
+  it('未開始の本戦で棄権すると相手が次戦へ進む', () => {
+    let state = withFinals();
+    const semi = state.matches.find((match) => match.stage === 'finals' && match.round === 1)!;
+    state = applyCommand(state, { type: 'withdraw-player', playerId: semi.b!, reason: '欠席' });
+    expect(state.matches.find((match) => match.round === 2)!.a).toBe(semi.a);
+    expect(state.audit.at(-1)!.detail).toContain(semi.label);
+  });
+  it('組み合わせ作成前・本戦に出ない参加者・二重の棄権を拒否する', () => {
+    const empty = createInitialState(false);
+    empty.players = [{ id: 'p0', name: '参加者0', affiliation: '', group: 'A' }];
+    expect(() =>
+      applyCommand(empty, { type: 'withdraw-player', playerId: 'p0', reason: '欠席' }),
+    ).toThrow('削除');
+
+    const finals = withFinals();
+    const eliminated = finals.players.find(
+      (player) =>
+        !finals.matches.some((match) => match.stage === 'finals' && involves(match, player.id)),
+    )!;
+    expect(() =>
+      applyCommand(finals, { type: 'withdraw-player', playerId: eliminated.id, reason: '欠席' }),
+    ).toThrow('本戦に出場');
+
+    const withdrawn = applyCommand(tournament(), {
+      type: 'withdraw-player',
+      playerId: 'p0',
+      reason: '欠席',
+    });
+    expect(() =>
+      applyCommand(withdrawn, { type: 'withdraw-player', playerId: 'p0', reason: '欠席' }),
+    ).toThrow('棄権済み');
+  });
+  it('棄権の記録がない保存データも読み込める', () => {
+    const { withdrawals: _, ...legacy } = createInitialState();
+    expect(stateSchema.parse(legacy).withdrawals).toEqual([]);
   });
 });

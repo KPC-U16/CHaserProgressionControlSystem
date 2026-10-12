@@ -1,5 +1,5 @@
 import type { Command, ControlState, Match } from '@chros/shared';
-import { evaluateMatch, groupNames, playerName, standings } from '@chros/scoring';
+import { groupNames, matchResult, playerName, standings } from '@chros/scoring';
 import { assertAllowed, createMatch } from './matches';
 
 type GenerateFinals = Extract<Command, { type: 'generate-finals' }>;
@@ -42,8 +42,7 @@ function validateQualifiers(state: ControlState, command: GenerateFinals) {
 
   const qualifying = state.matches.filter((match) => match.stage === 'qualifying');
   const qualifyingComplete =
-    qualifying.length > 0 &&
-    qualifying.every((match) => evaluateMatch(match, state.profile).winnerId);
+    qualifying.length > 0 && qualifying.every((match) => matchResult(state, match).settled);
   assertAllowed(qualifyingComplete, 'すべての予選試合を確定してから本戦を作成してください。');
 
   const suggested = suggestedQualifiers(state);
@@ -129,7 +128,7 @@ export function synchronizeFinals(state: ControlState) {
     match.sources.forEach((sourceId, index) => {
       if (!sourceId) return;
       const source = state.matches.find((candidate) => candidate.id === sourceId)!;
-      const winnerId = evaluateMatch(source, state.profile).winnerId;
+      const winnerId = matchResult(state, source).winnerId;
       const side = index === 0 ? 'a' : 'b';
       const changesStartedMatch = match.started && match[side] !== winnerId;
       assertAllowed(

@@ -3,7 +3,7 @@ import { phaseLabels, sceneLabels } from '@chros/shared';
 import { createInitialState } from './tournament/initial-state';
 import { assertAllowed, findMatch } from './tournament/matches';
 import { replayMatch, saveGame, startMatch } from './tournament/match-commands';
-import { removePlayer, savePlayer } from './tournament/players';
+import { reinstatePlayer, removePlayer, savePlayer, withdrawPlayer } from './tournament/players';
 import { generateQualifying } from './tournament/qualifying';
 import { generateFinals } from './tournament/finals';
 
@@ -59,6 +59,10 @@ function applyStateChange(state: ControlState, command: Command): string {
       return savePlayer(state, command.player);
     case 'remove-player':
       return removePlayer(state, command.playerId);
+    case 'withdraw-player':
+      return withdrawPlayer(state, command);
+    case 'reinstate-player':
+      return reinstatePlayer(state, command.playerId);
     case 'generate-qualifying':
       return generateQualifying(state);
     case 'generate-finals':

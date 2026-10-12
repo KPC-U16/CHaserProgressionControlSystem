@@ -1,7 +1,7 @@
 'use client';
 
 import type { SendCommand } from '@/lib/control-types';
-import { evaluateMatch, playerName } from '@chros/scoring';
+import { matchResult, playerName } from '@chros/scoring';
 import { type ControlState, type Match } from '@chros/shared';
 import { MatchControls } from './matches/MatchControls';
 export const statusLabels: Record<string, string> = {
@@ -9,6 +9,7 @@ export const statusLabels: Record<string, string> = {
   running: '対戦中',
   finished: '確定',
   replay: '再試合待ち',
+  void: '無効試合',
 };
 
 export default function MatchEditor({
@@ -20,7 +21,7 @@ export default function MatchEditor({
   match: Match;
   send: SendCommand;
 }) {
-  const result = evaluateMatch(match, state.profile);
+  const result = matchResult(state, match);
   return (
     <div className="match-editor">
       <div className="section-heading">
@@ -38,6 +39,11 @@ export default function MatchEditor({
           再試合 {match.attempt - 1} 回目 · 以前の結果は無効として保管しています。
         </div>
       )}
+      {result.voided && (
+        <div className="notice warning">
+          棄権者を含むため無効試合です。どちらにも勝敗・得点を加算しません。
+        </div>
+      )}
       {result.winnerId && (
         <div className="result-summary">
           <span className="result-trophy">↗</span>
@@ -45,8 +51,9 @@ export default function MatchEditor({
             <small>MATCH WINNER</small>
             <strong>{playerName(state, result.winnerId)}</strong>
             <span>
-              {result.decidedBy}で勝利 · 特殊P {result.a.special}–{result.b.special} / 合計得点{' '}
-              {result.a.points}–{result.b.points}
+              {result.forfeited
+                ? `${result.decidedBy} · 次戦へ進出`
+                : `${result.decidedBy}で勝利 · 特殊P ${result.a.special}–${result.b.special} / 合計得点 ${result.a.points}–${result.b.points}`}
             </span>
           </div>
         </div>

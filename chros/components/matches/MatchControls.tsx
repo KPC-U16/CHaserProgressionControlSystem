@@ -2,7 +2,7 @@
 import type { FormEvent } from 'react';
 
 import type { SendCommand } from '@/lib/control-types';
-import { playerName } from '@chros/scoring';
+import { matchResult, playerName } from '@chros/scoring';
 import { type ControlState, type Match } from '@chros/shared';
 import { useState } from 'react';
 import GameForm from './GameForm';
@@ -38,6 +38,13 @@ export function MatchControls({
 
   if (match.bye) {
     return <p className="muted">不戦進出として次の試合へ反映済みです。</p>;
+  }
+  if (matchResult(state, match).absentSides.length) {
+    return (
+      <p className="muted">
+        棄権者を含むため、先攻登録と得点入力はできません。取り消す場合は「参加者」画面で操作してください。
+      </p>
+    );
   }
   if (!match.a || !match.b) {
     return <div className="empty-state">前の試合の勝者が確定すると、対戦者が入ります。</div>;

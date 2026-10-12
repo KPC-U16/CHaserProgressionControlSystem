@@ -1,4 +1,4 @@
-import { evaluateMatch, playerName } from '@chros/scoring';
+import { matchResult, playerName } from '@chros/scoring';
 import { BRACKET_MATCHES_PER_PAGE } from '@/lib/board-pages';
 import { type ControlState } from '@chros/shared';
 
@@ -43,7 +43,7 @@ export function Bracket({
             {matches
               .filter((match) => match.round === round)
               .map((match) => {
-                const result = evaluateMatch(match, state.profile);
+                const result = matchResult(state, match);
                 return (
                   <div className="bracket-match" key={match.id}>
                     <small>
@@ -54,7 +54,10 @@ export function Bracket({
                       const playerId = match[side];
                       const isWinner = result.winnerId === playerId && !!playerId;
                       const emptySlotLabel = match.bye ? '不戦枠' : '対戦者未定';
-                      const pointsLabel = match.games.length ? result[side].points : '–';
+                      let pointsLabel: string | number = match.games.length
+                        ? result[side].points
+                        : '–';
+                      if (result.absentSides.includes(side)) pointsLabel = '棄権';
                       return (
                         <div key={side} className={isWinner ? 'bracket-winner' : ''}>
                           <span>{playerId ? playerName(state, playerId) : emptySlotLabel}</span>
