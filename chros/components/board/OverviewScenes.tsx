@@ -1,5 +1,5 @@
 import { boardPages, STANDINGS_ROWS_PER_CARD } from '@/lib/board-pages';
-import { evaluateMatch } from '@chros/scoring';
+import { matchResult } from '@chros/scoring';
 import { phaseLabels, type ControlState } from '@chros/shared';
 
 import { Bracket } from './Bracket';
@@ -7,9 +7,7 @@ import { StandingsTable } from './StandingsTable';
 
 export function StandingsScene({ state }: { state: ControlState }) {
   const qualifying = state.matches.filter((match) => match.stage === 'qualifying');
-  const completed = qualifying.filter(
-    (match) => evaluateMatch(match, state.profile).winnerId,
-  ).length;
+  const completed = qualifying.filter((match) => matchResult(state, match).settled).length;
   const pages = boardPages(state);
   return (
     <>

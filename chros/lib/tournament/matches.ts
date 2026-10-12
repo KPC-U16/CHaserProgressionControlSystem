@@ -1,4 +1,5 @@
 import type { ControlState, Match } from '@chros/shared';
+import { matchResult } from '@chros/scoring';
 
 export function assertAllowed(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -39,4 +40,8 @@ export function assertEditableMatch(state: ControlState, match: Match) {
   const qualifyingIsLocked = match.stage === 'qualifying' && finalsExist;
   assertAllowed(!qualifyingIsLocked, '本戦の組み合わせ確定後は予選結果を変更できません。');
   assertAllowed(!match.bye, '不戦進出の枠には得点を入力できません。');
+  assertAllowed(
+    !matchResult(state, match).absentSides.length,
+    '棄権者を含む試合は記録できません。棄権を取り消してから操作してください。',
+  );
 }

@@ -1,9 +1,10 @@
-import { evaluateMatch, playerName } from '@chros/scoring';
+import { matchResult, playerName, type MatchResult } from '@chros/scoring';
 import { reasonLabels, type ControlState } from '@chros/shared';
 
 import type { Match } from '@chros/shared';
 
-function progressLabel(match: Match, result: ReturnType<typeof evaluateMatch>) {
+function progressLabel(match: Match, result: MatchResult) {
+  if (result.voided) return '棄権により無効試合';
   if (result.winnerId) return '試合確定';
   if (result.tied) return '同点 · 再試合待ち';
   if (match.games.length) return `第${match.games.length}戦 終了時点`;
@@ -17,7 +18,7 @@ function coolPlayerId(match: Match, gameNumber: 1 | 2) {
 }
 
 export function MatchScene({ state, match }: { state: ControlState; match: Match }) {
-  const result = evaluateMatch(match, state.profile);
+  const result = matchResult(state, match);
   return (
     <>
       <div className="board-kicker">

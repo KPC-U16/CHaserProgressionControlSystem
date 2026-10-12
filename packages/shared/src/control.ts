@@ -78,6 +78,14 @@ export const matchSchema = z.object({
   ),
 });
 export type Match = z.infer<typeof matchSchema>;
+// 棄権した段階より前の結果は保つ。予選中の棄権だけが予選の対戦を無効にする。
+export const withdrawalSchema = z.object({
+  playerId: id,
+  stage: z.enum(['qualifying', 'finals']),
+  reason: z.string().trim().min(1).max(300),
+  at: z.string(),
+});
+export type Withdrawal = z.infer<typeof withdrawalSchema>;
 export const cueSchema = z.object({ id, label, scene: z.enum(scenes), phase: z.enum(phases) });
 export type Cue = z.infer<typeof cueSchema>;
 export const stateSchema = z.object({
@@ -96,6 +104,7 @@ export const stateSchema = z.object({
   advancePerGroup: z.number().int().min(1).max(8),
   players: z.array(playerSchema).max(128),
   matches: z.array(matchSchema),
+  withdrawals: z.array(withdrawalSchema).default([]),
   currentMatchId: id.nullable(),
   logo: z.string().max(1_500_000).nullable(),
   cues: z.array(cueSchema).max(40),
@@ -118,6 +127,12 @@ export const commandSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('replay'), matchId: id, reason: z.string().trim().min(1).max(300) }),
   z.object({ type: z.literal('save-player'), player: playerSchema }),
   z.object({ type: z.literal('remove-player'), playerId: id }),
+  z.object({
+    type: z.literal('withdraw-player'),
+    playerId: id,
+    reason: z.string().trim().min(1).max(300),
+  }),
+  z.object({ type: z.literal('reinstate-player'), playerId: id }),
   z.object({ type: z.literal('generate-qualifying') }),
   z.object({
     type: z.literal('generate-finals'),

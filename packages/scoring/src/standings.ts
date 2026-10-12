@@ -1,5 +1,5 @@
 import type { ControlState, Player, Profile } from '@chros/shared';
-import { evaluateMatch } from './match';
+import { absentPlayerIds, matchResult } from './match';
 
 export type Standing = {
   player: Player;
@@ -18,9 +18,12 @@ function compareResults(first: Standing, second: Standing, profile: Profile) {
   return winsDifference || specialDifference || second.points - first.points;
 }
 
+// 予選中に棄権した参加者は順位表から外し、本戦へ進めない。
 export function standings(state: ControlState, group?: string): Standing[] {
+  const withdrawn = absentPlayerIds(state, 'qualifying');
   const rows = state.players
     .filter((player) => group === undefined || player.group === group)
+    .filter((player) => !withdrawn.has(player.id))
     .map((player) => ({
       player,
       played: 0,
@@ -34,7 +37,7 @@ export function standings(state: ControlState, group?: string): Standing[] {
 
   for (const match of state.matches) {
     if (match.stage !== 'qualifying') continue;
-    const result = evaluateMatch(match, state.profile);
+    const result = matchResult(state, match);
     if (!result.winnerId) continue;
 
     for (const row of rows) {
@@ -71,6 +74,10 @@ export function standings(state: ControlState, group?: string): Standing[] {
 export function groupNames(state: ControlState) {
   const groups = new Set(state.players.map((player) => player.group));
   return [...groups].sort((first, second) => first.localeCompare(second, 'ja', { numeric: true }));
+}
+
+export function withdrawalOf(state: ControlState, playerId: string | null) {
+  return state.withdrawals.find((withdrawal) => withdrawal.playerId === playerId) ?? null;
 }
 
 export function playerName(state: ControlState, id: string | null) {

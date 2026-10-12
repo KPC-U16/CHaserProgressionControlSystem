@@ -18,6 +18,7 @@ export function createInitialState(demo = true): ControlState {
     boardPage: 0,
     players: [],
     matches: [],
+    withdrawals: [],
     currentMatchId: null,
     logo: null,
     cueId: null,

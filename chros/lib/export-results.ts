@@ -1,4 +1,4 @@
-import { evaluateGame, evaluateMatch, playerName } from '@chros/scoring';
+import { evaluateGame, matchResult, playerName } from '@chros/scoring';
 import { reasonLabels, type ControlState, type Game, type Match } from '@chros/shared';
 
 type MatchAttempt = {
@@ -54,14 +54,14 @@ function matchAttempts(match: Match): MatchAttempt[] {
 }
 
 function gameRow(state: ControlState, match: Match, attempt: MatchAttempt, game: Game) {
-  const matchResult = evaluateMatch(match, state.profile);
+  const result = matchResult(state, match);
   const gameResult = evaluateGame(game, state.profile);
   const secondCool = attempt.firstCool === match.a ? match.b : match.a;
   const coolPlayerId = game.number === 1 ? attempt.firstCool : secondCool;
   const hotPlayerId = coolPlayerId === match.a ? match.b : match.a;
   let decision = '';
-  if (attempt.active && matchResult.complete) {
-    decision = matchResult.tied ? '再試合待ち' : matchResult.decidedBy;
+  if (attempt.active && result.complete) {
+    decision = result.tied ? '再試合待ち' : result.decidedBy;
   }
   return [
     match.label,
@@ -83,7 +83,7 @@ function gameRow(state: ControlState, match: Match, attempt: MatchAttempt, game:
     gameResult.b.points,
     gameResult.a.special,
     gameResult.b.special,
-    attempt.active && matchResult.winnerId ? playerName(state, matchResult.winnerId) : '',
+    attempt.active && result.winnerId ? playerName(state, result.winnerId) : '',
     decision,
     attempt.reason,
     state.profile,

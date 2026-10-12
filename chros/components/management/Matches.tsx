@@ -1,7 +1,7 @@
 'use client';
 
 import type { ControlProps } from '@/lib/control-types';
-import { evaluateMatch, groupNames, playerName } from '@chros/scoring';
+import { groupNames, matchResult, playerName, withdrawalOf } from '@chros/scoring';
 import { useState } from 'react';
 import { Bracket, StandingsTable } from '../Board';
 import MatchEditor, { statusLabels } from '../MatchEditor';
@@ -52,7 +52,7 @@ export function Matches({ state, send }: ControlProps) {
               {state.matches
                 .filter((match) => filter === 'all' || match.stage === filter)
                 .map((match) => {
-                  const result = evaluateMatch(match, state.profile);
+                  const result = matchResult(state, match);
                   return (
                     <button
                       type="button"
@@ -67,16 +67,24 @@ export function Matches({ state, send }: ControlProps) {
                         </span>
                       </span>
                       <span className="match-row-players">
-                        <strong>{playerName(state, match.a)}</strong>
+                        <strong>
+                          {playerName(state, match.a)}
+                          {withdrawalOf(state, match.a) ? '（棄権）' : ''}
+                        </strong>
                         <span>vs</span>
-                        <strong>{match.bye ? '不戦枠' : playerName(state, match.b)}</strong>
+                        <strong>
+                          {match.bye ? '不戦枠' : playerName(state, match.b)}
+                          {withdrawalOf(state, match.b) ? '（棄権）' : ''}
+                        </strong>
                       </span>
                       <small>
-                        {match.games.length
-                          ? `${match.games.length}/2戦記録 · 得点 ${result.a.points}–${result.b.points} · 特殊P ${result.a.special}–${result.b.special}`
-                          : match.bye
-                            ? '次の試合へ進出'
-                            : '先攻・後攻は未登録'}
+                        {result.absentSides.length && !match.games.length
+                          ? result.decidedBy
+                          : match.games.length
+                            ? `${match.games.length}/2戦記録 · 得点 ${result.a.points}–${result.b.points} · 特殊P ${result.a.special}–${result.b.special}`
+                            : match.bye
+                              ? '次の試合へ進出'
+                              : '先攻・後攻は未登録'}
                         {state.currentMatchId === match.id ? ' · 掲示対象' : ''}
                       </small>
                     </button>
@@ -135,9 +143,7 @@ export function Matches({ state, send }: ControlProps) {
             </section>
           ) : (
             <FinalsSetup
-              key={
-                state.matches.filter((match) => evaluateMatch(match, state.profile).winnerId).length
-              }
+              key={state.matches.filter((match) => matchResult(state, match).settled).length}
               state={state}
               send={send}
             />

@@ -3,7 +3,7 @@ import type { FormEvent } from 'react';
 
 import type { ControlProps } from '@/lib/control-types';
 import { suggestedQualifiers } from '@/lib/tournament';
-import { evaluateMatch, groupNames, standings } from '@chros/scoring';
+import { groupNames, matchResult, standings, withdrawalOf } from '@chros/scoring';
 import { useState } from 'react';
 import { useConfirmation } from '../Confirmation';
 
@@ -13,8 +13,7 @@ export function FinalsSetup({ state, send }: ControlProps) {
   const [justification, setJustification] = useState('');
   const qualifying = state.matches.filter((match) => match.stage === 'qualifying');
   const qualifyingComplete =
-    qualifying.length > 0 &&
-    qualifying.every((match) => evaluateMatch(match, state.profile).winnerId);
+    qualifying.length > 0 && qualifying.every((match) => matchResult(state, match).settled);
   const hasTiedQualifiers = groupNames(state).some((group) =>
     standings(state, group).some((row) => row.tied && row.rank <= state.advancePerGroup),
   );
@@ -59,11 +58,13 @@ export function FinalsSetup({ state, send }: ControlProps) {
                   )
                 }
               >
-                {state.players.map((player) => (
-                  <option value={player.id} key={player.id}>
-                    {player.group}組 · {player.name}
-                  </option>
-                ))}
+                {state.players
+                  .filter((player) => !withdrawalOf(state, player.id))
+                  .map((player) => (
+                    <option value={player.id} key={player.id}>
+                      {player.group}組 · {player.name}
+                    </option>
+                  ))}
               </select>
             </label>
           ))}
